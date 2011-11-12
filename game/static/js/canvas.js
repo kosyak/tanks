@@ -16,7 +16,7 @@ var CanvasBlackjack = (function(id) {
         context = canvas.getContext('2d');
         context.fillStyle = "#ffffaa";
         context.fillRect(0, 0, 500, 300);
-    }
+    };
     function renderField() {
         var x, y, flag = { x: false, y: false };
         for (x = 0; x < canvas.clientWidth; x += block_size) {
@@ -29,10 +29,18 @@ var CanvasBlackjack = (function(id) {
             }
         }
         
-    }
+    };
+    function center() {
+        canvas.left = Math.max(0, 0.5 * (window.width - canvas.clientWidth));
+        canvas.top  = Math.max(0, 0.5 * (window.height - canvas.clientHeight));
+    };
+    
     return {
         init: init,
-        renderField: renderField
+        renderField: renderField,
+        width: function() { return canvas.clientWidth; },
+        height: function() { return canvas.clientHeight; },
+        center: center
     }
 })('canvasOne');
 
