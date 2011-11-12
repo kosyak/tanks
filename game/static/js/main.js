@@ -1,4 +1,5 @@
 window.onload = function() {
+/* 
     var source = new EventSource('/stream');
     var uuid = '';
 
@@ -22,4 +23,6 @@ window.onload = function() {
             }
         });
     }, false);
+*/
+    initCanvas('canvasOne');
 }
