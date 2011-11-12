@@ -57,7 +57,7 @@ app.configure('production', function(){
 });
 
 app.get('/', function(req, res){
-    res.render('index', { layout: false, pageTitle: 'My Site', youAreUsingJade: true, app_id: '' });
+    res.render('index', { layout: false, pageTitle: 'Tanks will be here. We promise.', youAreUsingJade: true, app_id: '' });
     // res.render('index', { pageTitle: 'My Site', youAreUsingJade: true });
 });
 
@@ -70,7 +70,6 @@ app.post('/login', function(req, res) {
 app.get('/stream', function(req, res) {
     sse.subscribe(req, res);
     sse.send('SSE init OK');
-    twitter.filter();
 });
 
 app.post('/unsubscribe/:id', function(req, res) {
