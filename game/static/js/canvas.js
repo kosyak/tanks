@@ -31,8 +31,8 @@ var CanvasBlackjack = (function(id) {
         
     };
     function center() {
-        canvas.style.left = Math.max(0, 0.5 * (window.width - canvas.clientWidth)) + 'px';
-        canvas.style.top  = Math.max(0, 0.5 * (window.height - canvas.clientHeight)) + 'px';
+        canvas.style.left = Math.max(0, 0.5 * (document.width - canvas.clientWidth)) + 'px';
+        canvas.style.top  = Math.max(0, 0.5 * (document.height - canvas.clientHeight)) + 'px';
     };
     
     return {
