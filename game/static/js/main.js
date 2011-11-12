@@ -24,5 +24,7 @@ window.onload = function() {
         });
     }, false);
 */
-    initCanvas('canvasOne');
+    // initCanvas('canvasOne');
+    CanvasBlackjack.init();
+    CanvasBlackjack.renderField();
 }
