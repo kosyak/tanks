@@ -1,0 +1,8 @@
+require('http').createServer(function (request, response) {
+  response.writeHead(200, {"Content-Type": "text/plain"});
+  output = "Fucking Tanks Are where?!\n";
+  for (k in request.headers) {
+    output += k + '=' + request.headers[k] + '\n';
+  }
+  response.end(output);
+}).listen(8080);
