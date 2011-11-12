@@ -24,7 +24,7 @@ function initCanvas(id) {
 }
 
 function renderField() {
-        x, y;
+    var x, y;
     for (x = 0; x < canvas.innerWidth; x += block_size) {
         for (y = 0; y < canvas.innerHeight; y += block_size) {
             context.fillStyle = ((x + y) % 2) ? '#000000' : '#ffffff';
