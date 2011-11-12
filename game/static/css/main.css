@@ -39,6 +39,10 @@ header h1 {
     position: absolute;
 }
 
+#container canvas {
+    position: absolute;
+}
+
 #container img {
     margin: 0 0px;
     border: #f80 solid 1px;

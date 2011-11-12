@@ -28,5 +28,6 @@ window.onload = function() {
     CanvasBlackjack.init();
     CanvasBlackjack.renderField();
     window.onresize = CanvasBlackjack.center;
+    CanvasBlackjack.center();
 }
 

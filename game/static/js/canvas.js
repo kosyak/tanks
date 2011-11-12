@@ -5,7 +5,7 @@ function canvasSupport () {
 var CanvasBlackjack = (function(id) {
     var canvas,
         context,
-        block_size = 40; // размер одного квадрата поля
+        block_size = 60; // размер одного квадрата поля
     function init() {
         canvas = document.getElementById(id);
         if (!canvas || !canvas.getContext) { 
