@@ -18,11 +18,12 @@ var CanvasBlackjack = (function(id) {
         context.fillRect(0, 0, 500, 300);
     }
     function renderField() {
-        var x, y;
+        var x, y, flag = false;
         for (x = 0; x < canvas.clientWidth; x += block_size) {
             for (y = 0; y < canvas.clientHeight; y += block_size) {
-                context.fillStyle = ((x + y) % 2) ? '#000000' : '#ffffff';
+                context.fillStyle = flag ? '#000000' : '#ffffff';
                 context.fillRect(x, y, block_size, block_size);
+                flag = !flag;
             }
         }
         
