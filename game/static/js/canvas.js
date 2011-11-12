@@ -2,7 +2,7 @@ function canvasSupport () {
     return !!document.createElement('testcanvas').getContext;
 }
 
-var CanvasBlackjack = (function() {
+var CanvasBlackjack = (function(id) {
     var canvas,
         context,
         block_size = 10; // размер одного квадрата поля
