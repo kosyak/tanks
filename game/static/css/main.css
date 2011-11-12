@@ -1,0 +1,54 @@
+body {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    background-color: #f80;
+}
+
+header > * {
+    margin: 5px;
+}
+
+header h1 {
+    display: inline-block;
+}
+
+#login_block {
+    display: inline-block;
+    float: right;
+    height: 22px;
+}
+
+.login {
+    display: inline-block;
+    margin: 0 10px;
+    /* position: absolute; */
+}
+
+#fb_login {
+    top: -6px;
+    position: relative;
+}
+
+#loading {
+    display: none;
+    color: red;
+}
+
+#container {
+    position: absolute;
+}
+
+#container img {
+    margin: 0 0px;
+    border: #f80 solid 1px;
+}
+
+#popup {
+    position: fixed;
+    background-color: black;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    display: none;
+}
