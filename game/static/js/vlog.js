@@ -2,7 +2,9 @@
 
 var vLog = (function(id) {
     var container = document.getElementById(id);
+    console.log(container);
     function log(msg) {
+        console.log(container);
         if (!container || !container.innerHTML) {
             console.error('No vLog to write found');
             return false;
@@ -16,4 +18,4 @@ var vLog = (function(id) {
     return {
         log: log
     }
-}) ('log');
+})('log');
