@@ -48,11 +48,14 @@ header h1 {
     border: #f80 solid 1px;
 }
 
-#popup {
+#log {
     position: fixed;
-    background-color: black;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    display: none;
+    left: 0px;
+    top: 0px;
+    width: 50%;
+    height: auto;
+    background-color: white;
+    font-size: 12px;
+    color: green;
 }
+
