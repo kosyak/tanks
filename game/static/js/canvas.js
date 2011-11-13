@@ -41,7 +41,8 @@ var CanvasBlackjack = (function(id) {
         renderField: renderField,
         width: function() { return canvas.clientWidth; },
         height: function() { return canvas.clientHeight; },
-        center: center
+        center: center,
+        context: context // TODO: this is very bad! makes object too open
     }
 })('canvasOne');
 

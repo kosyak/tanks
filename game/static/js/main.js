@@ -1,3 +1,5 @@
+// TODO: replace following with window.addEventListener('load', eventWindowLoaded, false);
+
 window.onload = function() {
 /* 
     var source = new EventSource('/stream');
@@ -29,5 +31,8 @@ window.onload = function() {
 /*    CanvasBlackjack.renderField(); */
     window.onresize = CanvasBlackjack.center;
     CanvasBlackjack.center();
+    
+    var tank = new Tank(CanvasBlackjack.context);
+    tank.place(70, 70);
 }
 
