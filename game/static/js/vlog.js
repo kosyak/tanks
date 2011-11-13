@@ -1,10 +1,12 @@
 /* vLog - visual Log */
 
 var vLog = (function(id) {
-    var container = document.getElementById(id);
-    console.log(container);
+    var container = false,
+        container_id = id;
     function log(msg) {
-        console.log(container);
+        if (!container) {
+            container = document.getElementById(container_id);
+        }
         if (!container || !container.innerHTML) {
             console.error('No vLog to write found');
             return false;
