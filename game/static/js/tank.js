@@ -5,13 +5,15 @@
  *
  **/
 
-function Tank(context) {
-    this.img_src = '../img/tank_top.png';
+function Tank(context, callback) {
+    this.img_src = '/img/tank_top.png';
     this.img = new Image();
     this.img.src = this.img_src;
-    this.context = context;
-    
-    
+    if (typeof callback === 'function') {
+        this.img.onload = callback;
+    }
+
+    this.context = context;    
 }
 
 Tank.prototype.place = function(x, y) {
