@@ -4,10 +4,6 @@ window.addEventListener('DOMContentLoaded', function() {
     vLog.log('Hello'); 
 }, false);
 
-window.onkeypress = function(event) {
-    vLog.log('Key ' + String.fromCharCode(event.charCode));
-}
-
 window.onload = function() {
 /* 
     var source = new EventSource('/stream');
@@ -42,6 +38,10 @@ window.onload = function() {
     
     var tank = new Tank(CanvasBlackjack.context(), function() {
         tank.place(70, 70);
+        window.onkeypress = function(event) {
+            vLog.log('Key ' + String.fromCharCode(event.charCode));
+            tank.keyAction(event.charCode);
+        }        
     });
 }
 
