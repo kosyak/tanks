@@ -7,7 +7,7 @@ var vLog = (function(id) {
         if (!container) {
             container = document.getElementById(container_id);
         }
-        if (!container || (typeof !container.innerHTML === 'undefined')) {
+        if (!container || (typeof container.innerHTML === 'undefined')) {
             console.error('No vLog to write found');
             return false;
         }
