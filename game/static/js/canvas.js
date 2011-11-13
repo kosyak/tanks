@@ -42,7 +42,7 @@ var CanvasBlackjack = (function(id) {
         width: function() { return canvas.clientWidth; },
         height: function() { return canvas.clientHeight; },
         center: center,
-        context: context // TODO: this is very bad! makes object too open
+        context: function() { return context; } // TODO: this is very bad! makes object too open
     }
 })('canvasOne');
 
