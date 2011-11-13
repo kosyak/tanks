@@ -1,8 +1,12 @@
 // TODO: replace following with window.addEventListener('load', eventWindowLoaded, false);
 
 window.addEventListener('DOMContentLoaded', function() {
-    vLog.log('Hello');
+    vLog.log('Hello'); 
 }, false);
+
+window.onkeypress = function(event) {
+    vLog.log(event);
+}
 
 window.onload = function() {
 /* 
