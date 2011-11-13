@@ -27,7 +27,7 @@ window.onload = function() {
     }, false);
 */
     // initCanvas('canvasOne');
-    vLog('Hello');
+    vLog.log('Hello');
     CanvasBlackjack.init();
 /*    CanvasBlackjack.renderField(); */
     window.onresize = CanvasBlackjack.center;

@@ -10,6 +10,6 @@ var vLog = (function(id) {
         console.log(msg);
     }
     return {
-        log: function() {}
+        log: log
     }
 }) ('log');
