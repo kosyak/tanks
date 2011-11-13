@@ -7,13 +7,13 @@ var vLog = (function(id) {
         if (!container) {
             container = document.getElementById(container_id);
         }
-        if (!container || !container.innerHTML) {
+        if (!container || !container.innerText) {
             console.error('No vLog to write found');
             return false;
         }
         var date = new Date();
         if (msg.toString()) {
-            container.innerHTML = '[' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '] ' + msg.toString();
+            container.innerText = '[' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '] ' + msg.toString();
         }
         console.log(msg);
     }
