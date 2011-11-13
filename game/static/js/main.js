@@ -1,5 +1,9 @@
 // TODO: replace following with window.addEventListener('load', eventWindowLoaded, false);
 
+document.onreadystatechange = function() {
+    vLog.log('Hello');
+}
+
 window.onload = function() {
 /* 
     var source = new EventSource('/stream');
@@ -27,7 +31,6 @@ window.onload = function() {
     }, false);
 */
     // initCanvas('canvasOne');
-    vLog.log('Hello');
     CanvasBlackjack.init();
 /*    CanvasBlackjack.renderField(); */
     window.onresize = CanvasBlackjack.center;
