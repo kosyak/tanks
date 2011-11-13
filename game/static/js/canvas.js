@@ -16,6 +16,7 @@ var CanvasBlackjack = (function(id) {
         context = canvas.getContext('2d');
         context.fillStyle = "#ffffaa";
         context.fillRect(0, 0, 500, 300);
+        this.renderField();
     };
     function renderField() {
         var x, y, flag = { x: false, y: false };

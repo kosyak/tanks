@@ -26,7 +26,7 @@ window.onload = function() {
 */
     // initCanvas('canvasOne');
     CanvasBlackjack.init();
-    CanvasBlackjack.renderField();
+/*    CanvasBlackjack.renderField(); */
     window.onresize = CanvasBlackjack.center;
     CanvasBlackjack.center();
 }
