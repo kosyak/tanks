@@ -1,8 +1,8 @@
 // TODO: replace following with window.addEventListener('load', eventWindowLoaded, false);
 
-document.onreadystatechange = function() {
+window.addEventListener('DOMContentLoaded', function() {
     vLog.log('Hello');
-}
+}, false);
 
 window.onload = function() {
 /* 
