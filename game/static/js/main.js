@@ -5,7 +5,7 @@ window.addEventListener('DOMContentLoaded', function() {
 }, false);
 
 window.onkeypress = function(event) {
-    vLog.log(event);
+    vLog.log('Key ' + String.fromCharCode(event.charCode));
 }
 
 window.onload = function() {
