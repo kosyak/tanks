@@ -12,7 +12,7 @@ function Tank(context, callback) {
     if (typeof callback === 'function') {
         this.img.onload = function() { this.lastMove = new Date(); callback(); } 
     }
-    this.deltaChar = {}
+    this.deltaChar = {};
 
     this.context = context;
     
@@ -49,7 +49,7 @@ Tank.prototype.move = function(char_code) {
     var delta = this.deltaFromCharCode(char_code),
         time = new Date(); // TODO: check Date.now() compatibility and use if possible
     // if (this)
-    this.pos.x += delta.x * this.speed * (time - this.lastMove);
+    this.pos.x += delta.x * this.speed * /*(time - this.lastMove) */ 10; // wtf?
     CanvasBlackjack.renderField();
     this.place();
     this.lastMove = time;
