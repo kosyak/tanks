@@ -64,14 +64,15 @@ Tank.prototype.unWatchKey = function() {
 Tank.prototype.waitForMovement = function() {
     var self = this;
     document.onkeydown = function(event) {
-        if (!self.isMoving) {
-            function moving_func() {
-                self.isMoving = setTimeout(moving_func, 30);
-                self.keyListener(event);
-            }
-            moving_func();
-            // self.waitForStop();
+        if (self.isMoving) {
+            clearTimeout(self.isMoving);
         }
+        function moving_func() {
+            self.isMoving = setTimeout(moving_func, 30);
+            self.keyListener(event);
+        }
+        moving_func();
+        // self.waitForStop();
     };
 };
 
