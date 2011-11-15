@@ -1,11 +1,11 @@
 // TODO: replace following with window.addEventListener('load', eventWindowLoaded, false);
 
 window.addEventListener('DOMContentLoaded', function() {
-    vLog.log('Hello'); 
+    vLog.log('Hello');
 }, false);
 
 window.onload = function() {
-/* 
+/*
     var source = new EventSource('/stream');
     var uuid = '';
 
@@ -35,13 +35,10 @@ window.onload = function() {
 /*    CanvasBlackjack.renderField(); */
     window.onresize = CanvasBlackjack.center;
     CanvasBlackjack.center();
-    
+
     var tank = new Tank(CanvasBlackjack.context(), function() {
         tank.place(70, 70);
-        window.onkeypress = function(event) {
-            vLog.log('Key ' + String.fromCharCode(event.charCode));
-            tank.keyAction(event.charCode);
-        }        
+        MainLoop.start();
     });
 }
 
