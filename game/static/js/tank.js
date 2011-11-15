@@ -98,7 +98,8 @@ Tank.prototype.move = function(char_code) {
     var delta = this.deltaFromCharCode(char_code),
         time = new Date(); // TODO: check Date.now() compatibility and use if possible
     // if (this)
-    this.pos.x += delta.x * this.speed * /*(time - this.lastMove) */ 30; // wtf?
+    this.pos.x += delta.x * this.speed * 30; // @waitForMovement
+    this.pos.y += delta.y * this.speed * 30; // @waitForMovement
     CanvasBlackjack.renderField();
     this.place();
     this.lastMove = time;
