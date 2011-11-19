@@ -2,44 +2,42 @@ var uuid = require('node-uuid');
 var subscribers = {};
 
 exports.subscribe = function(request, response) {
-    if (request.headers.accept && request.headers.accept === 'text/event-stream') {
+    if (request.headers.accept && request.headers.accept === 'text/event-stream' && request.url === '/stream') {
         var id = uuid();
         subscribers[id] = response;
-
         response.writeHead(200, {
             'Content-Type': 'text/event-stream',
             'Cache-Control': 'no-cache',
             'Connection': 'keep-alive'
         });
         console.log('SSE open [' + id + ']');
-        this.send(id, response, 'uuid');
-        this.send('hi', response);
-        // res.end();
+        this.send(id, 'uuid', response);
     }
 }
 
 /**
  * Генерирует Server Sent Events
  * @param data данные, которые будут закодированы в JSON
- * @param subscriber подписчик, по умолчанию - все подписчики
  * @param event название события, по умолчанию 'data'
+ * @param subscribers подписчики, по умолчанию - все
  */
-exports.send = function(data, subscriber, event) {
+exports.send = function(data, event, res) {
     if (!this.ready()) {
         console.error('SSE not ready');
         return false;
         // this.init();
     }
-    var send_to = (subscriber) ? { 0: subscriber } : subscribers;
+    var send_to = (res) ? { 0: res } : subscribers;
     if (typeof data === 'object') {
         data = JSON.stringify(data);
     }
 
-    for (key in send_to) {
+    for (var key in send_to) {
+        // console.log('DATA', ((event) ? 'event: ' + event + '\n' : '') + 'data: ' + data + '\n\n');
         send_to[key].write(((event) ? 'event: ' + event + '\n' : '') + 'data: ' + data + '\n\n');
         // res.end();
     }
-    console.log('SSE sent [' + Array.prototype.slice.call(send_to) + ']');
+    console.log('SSE sent: ' + data);
 }
 
 exports.unsubscribe = function(id) {

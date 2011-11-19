@@ -27,6 +27,7 @@ function NotFound(msg){
 
 NotFound.prototype.__proto__ = Error.prototype;
 
+var has_bot = false;
 var express = require('express');
 var app = express.createServer(
     // express.logger(),
@@ -57,14 +58,17 @@ app.configure('production', function(){
 });
 
 app.get('/', function(req, res){
-    res.render('index', { layout: false, pageTitle: 'Tanks will be here. We promise.', youAreUsingJade: true, app_id: '' });
-    // res.render('index', { pageTitle: 'My Site', youAreUsingJade: true });
+    res.render('index', { layout: false, pageTitle: 'Tanks will be here soon. We promise.', youAreUsingJade: true, app_id: '' });
 });
 
-app.post('/auth', function(req, res) {
-});
-
-app.post('/login', function(req, res) {
+app.get('/bot', function(req, res) {
+    if (!has_bot) {
+        has_bot = true;
+        setTimeout(function() {
+            sse.send({ type: 'create', position: { x: 140, y: 140 } }, 'bot');
+            res.end();
+        }, 2000);
+    }
 });
 
 app.get('/stream', function(req, res) {
