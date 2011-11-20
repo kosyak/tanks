@@ -1,5 +1,5 @@
 var MainLoop = (function() {
-    var fps = 30,
+    var fps = 60,
         loop_query = [],
         timeouts = {
             main_loop: null,
@@ -33,10 +33,11 @@ var MainLoop = (function() {
     }
     return {
         start: function() {
-            StartFPSCounter();
+            // StartFPSCounter();
             startLoop();
         },
         stop: stopLoop,
-        push: pushQuery
+        push: pushQuery,
+        fps: function() { return fps; }
     }
 } ());
