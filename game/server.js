@@ -63,7 +63,7 @@ app.get('/', function(req, res){
 
 app.get('/bot', function(req, res) {
     if (!has_bot) {
-        has_bot = true;
+        // has_bot = true;
         setTimeout(function() {
             sse.send({ type: 'create', position: { x: 140, y: 140 } }, 'bot');
             res.end();

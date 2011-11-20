@@ -26,8 +26,8 @@ var CanvasBlackjack = (function(id) {
             height: Math.floor(canvas.clientHeight / block_size)
         };
         var x, y;
-        for (x = Math.max(0, rect.x); x < Math.min(10, rect.width); x += 1) {
-            for (y = Math.max(0, rect.y); y < Math.min(10, rect.height); y += 1) {
+        for (x = Math.max(0, rect.x); x < Math.min(10, rect.x + rect.width); x += 1) {
+            for (y = Math.max(0, rect.y); y < Math.min(10, rect.y + rect.height); y += 1) {
                 context.fillStyle = (x % 2 + y % 2) % 2 ? '#000000' : '#ffffff';
                 context.fillRect(x * block_size, y * block_size, block_size, block_size);
             }
@@ -44,6 +44,7 @@ var CanvasBlackjack = (function(id) {
         renderField: renderField,
         width: function() { return canvas.clientWidth; },
         height: function() { return canvas.clientHeight; },
+        blockSize: function() { return block_size; },
         center: center,
         context: function() { return context; } // TODO: this is very bad! makes object too open
     }

@@ -31,7 +31,7 @@ var Keyboard = (function() {
         for (var key in state) {
             if (state[key] && callbacks[key] && callbacks[key].length) {
                 for (var i = 0; i < callbacks[key].length; i += 1) {
-                    vLog.log('keyboard call ' + key);
+                    // vLog.log('keyboard call ' + key);
                     callbacks[key][i](key);
                 }
             }

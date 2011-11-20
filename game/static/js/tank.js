@@ -25,8 +25,8 @@ function Tank(context, keys, callback) {
 
     var self = this;
     for (var c in this.key) {
-        Keyboard.assign(this.key[c], function() {
-            self.move(self.key[c])
+        Keyboard.assign(this.key[c], function(keycode) {
+            self.move(keycode);
         });
     }
 }
@@ -52,10 +52,14 @@ Tank.prototype.deltaFromCharCode = function(char_code) {
 Tank.prototype.move = function(char_code) {
     var delta = this.deltaFromCharCode(char_code),
         time = new Date(); // TODO: check Date.now() compatibility and use if possible
-    // if (this)
     this.pos.x += delta.x * this.speed * 30; // @waitForMovement
     this.pos.y += delta.y * this.speed * 30; // @waitForMovement
-    CanvasBlackjack.renderField();
+    CanvasBlackjack.renderField({ 
+        x: Math.floor(this.pos.x / CanvasBlackjack.blockSize())-1, 
+        y: Math.floor(this.pos.y / CanvasBlackjack.blockSize())-1, 
+        width: 3, 
+        height: 3 
+    });
     this.place();
     this.lastMove = time;
 }
