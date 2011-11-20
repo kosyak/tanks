@@ -5,7 +5,7 @@ var MainLoop = (function() {
             main_loop: null,
             fps_counter: null
         },
-        actual_fps = 0; // actual actions-per-second
+        actual_fps = 0; // real fps
     function loop() {
         for (var i = 0, _l = loop_query.length; i < _l; i += 1) {
             if (typeof loop_query[i] === 'function') {

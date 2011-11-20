@@ -2,10 +2,13 @@
  * Объект танка
  *
  * @param CanvasRenderingContext2D container контекст, на котором будет рисоваться танк
+ * @param Object keys массив кодов клавиш { left: key_left, top: key_top, right: key_right, down: key_bottom }
  *
  **/
 
-function Tank(context, callback) {
+function Tank(context, keys, callback) {
+    this.key = (keys && typeof keys !== 'function') ? keys : {};
+    console.log(this.key);
     this.imgURI = '/img/tank_top.png'; // URI! Yo!
     this.img = new Image();
     this.img.src = this.imgURI;
@@ -20,18 +23,15 @@ function Tank(context, callback) {
     this.lastMove = new Date();
     this.pos = { x: 0, y: 0 };
 
-    this.isMoving = false;
-    /* MainLoop.push(this.watchKey);
-    MainLoop.push(this.unWatchKey); */
-    /* window.addEventListener('onkeydown', function(e) { vLog.log('keydown: ' + e.charCode); });
-    window.addEventListener('onkeyup', function(e) { vLog.log('keyup: ' + e.charCode); });
-    window.addEventListener('onkeypress', function(e) { vLog.log('keypress: ' + e.charCode); }); */
-    /* document.onkeydown = function(e) { vLog.log('keydown: ' + e.charCode); };
-    document.onkeyup = function(e) { vLog.log('keyup: ' + e.charCode); };
-    document.onkeypress = function(e) { vLog.log('keypress: ' + e.charCode); }; */
-    this.waitForMovement();
-    this.waitForStop();
+    var self = this;
+    for (var c in this.key) {
+        Keyboard.assign(this.key[c], function() {
+            self.move(self.key[c])
+        });
+    }
 }
+
+
 
 Tank.prototype.place = function(x, y) {
     if (!isNaN(x) && !isNaN(y)) {
@@ -40,59 +40,13 @@ Tank.prototype.place = function(x, y) {
     this.context.drawImage(this.img, this.pos.x, this.pos.y);
 }
 
-Tank.prototype.keyListener = function(event) {
-    var char_code = event.which/*charCode*/,
-        key = String.fromCharCode(char_code).toLowerCase();
-    // vLog.log(event);
-    vLog.log('Key ' + key);
-    if (['w', 'a', 's', 'd'].indexOf(key) != -1) {
-        this.move(char_code);
-    }
-}
-/*
-Tank.prototype.watchKey = function() {
-    vLog.log('watchKey fired');
-    window.addEventListener('onkeypress', this.keyListener, false);
-}
-
-Tank.prototype.unWatchKey = function() {
-    vLog.log('unWatchKey fired');
-    window.removeEventListener('onkeypress', this.keyListener, false);
-}
-*/
-
-Tank.prototype.waitForMovement = function() {
-    var self = this;
-    document.onkeydown = function(event) {
-        if (self.isMoving) {
-            clearTimeout(self.isMoving);
-        }
-        function moving_func() {
-            self.isMoving = setTimeout(moving_func, 30);
-            self.keyListener(event);
-        }
-        moving_func();
-        // self.waitForStop();
-    };
-};
-
-Tank.prototype.waitForStop = function() {
-    var self = this;
-    document.onkeyup = function() {
-        clearTimeout(self.isMoving);
-        self.isMoving = false;
-        // self.waitForMovement();
-    };
-};
-
 Tank.prototype.deltaFromCharCode = function(char_code) {
-    var keys_deltas = {
-        'w': { x: 0,  y: -1 },
-        'a': { x: -1, y: 0 },
-        's': { x: 0,  y: 1 },
-        'd': { x: 1,  y: 0 }
-    };
-    return keys_deltas[String.fromCharCode(char_code).toLowerCase()];
+    var keys_deltas = {};
+    keys_deltas[this.key.top] = { x: 0,  y: -1 };
+    keys_deltas[this.key.left] = { x: -1, y: 0 };
+    keys_deltas[this.key.right] = { x: 0,  y: 1 };
+    keys_deltas[this.key.down] = { x: 1,  y: 0 };
+    return keys_deltas[char_code];
 };
 
 Tank.prototype.move = function(char_code) {

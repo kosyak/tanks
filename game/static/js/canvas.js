@@ -18,15 +18,18 @@ var CanvasBlackjack = (function(id) {
         context.fillRect(0, 0, 500, 300);
         this.renderField();
     };
-    function renderField() {
-        var x, y, flag = { x: false, y: false };
-        for (x = 0; x < canvas.clientWidth; x += block_size) {
-            flag.x = !flag.x;
-            flag.y = flag.x;
-            for (y = 0; y < canvas.clientHeight; y += block_size) {
-                context.fillStyle = flag.y ? '#000000' : '#ffffff';
-                context.fillRect(x, y, block_size, block_size);
-                flag.y = !flag.y;
+    function renderField(rect) {
+        rect = rect || { 
+            x: 0, 
+            y: 0, 
+            width: Math.floor(canvas.clientWidth / block_size), 
+            height: Math.floor(canvas.clientHeight / block_size)
+        };
+        var x, y;
+        for (x = Math.max(0, rect.x); x < Math.min(10, rect.width); x += 1) {
+            for (y = Math.max(0, rect.y); y < Math.min(10, rect.height); y += 1) {
+                context.fillStyle = (x % 2 + y % 2) % 2 ? '#000000' : '#ffffff';
+                context.fillRect(x * block_size, y * block_size, block_size, block_size);
             }
         }
         

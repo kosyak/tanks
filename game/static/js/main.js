@@ -11,7 +11,7 @@ window.onload = function() {
     window.onresize = CanvasBlackjack.center;
     CanvasBlackjack.center();
 
-    var tank = new Tank(CanvasBlackjack.context(), function() {
+    var tank = new Tank(CanvasBlackjack.context(), { left: 37, top: 38, right: 39, down: 40 }, function() {
         tank.place(70, 70);
         MainLoop.start();
     });
