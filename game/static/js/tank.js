@@ -7,13 +7,13 @@
  **/
 
 function Tank(context, keys, callback) {
-    this.key = (keys && typeof keys !== 'function') ? keys : {};
+    this.key = (keys && typeof keys !== 'function') ? keys : false;
     console.log(this.key);
     this.imgURI = '/img/tank_top.png'; // URI! Yo!
     this.img = new Image();
     this.img.src = this.imgURI;
-    if (typeof callback === 'function') {
-        this.img.onload = function() { this.lastMove = new Date(); callback(); }
+    if (typeof callback === 'function' || typeof keys === 'function') {
+        this.img.onload = function() { this.lastMove = new Date(); (typeof callback === 'function') ? callback() : keys(); }
     }
     this.deltaChar = {};
 
@@ -24,19 +24,27 @@ function Tank(context, keys, callback) {
     this.pos = { x: 0, y: 0 };
 
     var self = this;
-    for (var c in this.key) {
-        Keyboard.assign(this.key[c], function(keycode) {
-            self.move(keycode);
-        });
+    if (this.key) {
+        for (var c in this.key) {
+            Keyboard.assign(this.key[c], function(keycode) {
+                self.move(keycode);
+            });
+        }
+    } else {
+        MainLoop.push(function() { self.place(); });
     }
 }
-
-
 
 Tank.prototype.place = function(x, y) {
     if (!isNaN(x) && !isNaN(y)) {
         this.pos = {x: x, y: y};
     }
+    CanvasBlackjack.renderField({ 
+        x: Math.floor(this.pos.x / CanvasBlackjack.blockSize())-1, 
+        y: Math.floor(this.pos.y / CanvasBlackjack.blockSize())-1, 
+        width: 3, 
+        height: 3 
+    });
     this.context.drawImage(this.img, this.pos.x, this.pos.y);
 }
 
@@ -54,12 +62,6 @@ Tank.prototype.move = function(char_code) {
         time = new Date(); // TODO: check Date.now() compatibility and use if possible
     this.pos.x += delta.x * this.speed * MainLoop.fps() * 0.4; // @waitForMovement
     this.pos.y += delta.y * this.speed * MainLoop.fps() * 0.4; // @waitForMovement
-    CanvasBlackjack.renderField({ 
-        x: Math.floor(this.pos.x / CanvasBlackjack.blockSize())-1, 
-        y: Math.floor(this.pos.y / CanvasBlackjack.blockSize())-1, 
-        width: 3, 
-        height: 3 
-    });
     this.place();
     this.lastMove = time;
 }

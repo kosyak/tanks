@@ -36,6 +36,7 @@ var Events = (function() {
         switch (data.type) {
             case 'create': 
                 bot_tank = new Tank(CanvasBlackjack.context(), function() {
+                    console.log('set pos: ', data.position);
                     bot_tank.place(data.position.x, data.position.y);
                 });
             break;
