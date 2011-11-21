@@ -1,0 +1,10 @@
+{
+  "name": "tanks",
+  "version": "0.1.0",
+  "dependencies": {
+    "express": "",
+    "jade": "",
+    "node-uuid": ""
+ },
+ "main": "game" 
+}
