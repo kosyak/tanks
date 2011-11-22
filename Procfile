@@ -1,2 +1,2 @@
-game: node game/server.js
+game: node server.js
 
