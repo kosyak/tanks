@@ -5,6 +5,5 @@
     "express": "",
     "jade": "",
     "node-uuid": ""
- },
- "main": "game" 
+  }
 }
