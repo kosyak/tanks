@@ -1,2 +1,2 @@
-tanks: node tanks.js
+web: node web.js
 
