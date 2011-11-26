@@ -1,5 +1,5 @@
 var MainLoop = (function() {
-    var fps = 60,
+    var fps = 50,
         loop_query = [],
         loop_clear_query = [],
         timeouts = {

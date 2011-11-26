@@ -9,7 +9,7 @@
 function Tank(context, keys, callback) {
     this.key = (keys && typeof keys !== 'function') ? keys : false;
     console.log(this.key);
-    this.imgURI = '/img/tank_top.png'; // URI! Yo!
+    this.imgURI = '/img/tank.png'; // URI! Yo!
     this.img = new Image();
     this.img.src = this.imgURI;
     if (typeof callback === 'function' || typeof keys === 'function') {
@@ -19,7 +19,7 @@ function Tank(context, keys, callback) {
 
     this.context = context;
 
-    this.speed = 0.1; // pixels per millisecond
+    this.speed = 0.04; // pixels per millisecond
     this.lastMove = new Date();
     this.pos = { x: 0, y: 0 };
 
@@ -59,7 +59,6 @@ Tank.prototype.deltaFromCharCode = function(char_code) {
 
 Tank.prototype.move = function(char_code) {
     var delta = this.deltaFromCharCode(char_code);
-    this.pos.x += delta.x * this.speed * MainLoop.fps() * 0.4; // @waitForMovement
-    this.pos.y += delta.y * this.speed * MainLoop.fps() * 0.4; // @waitForMovement
-    // this.place();
+    this.pos.x += delta.x * this.speed * MainLoop.fps();
+    this.pos.y += delta.y * this.speed * MainLoop.fps();
 }
