@@ -17,3 +17,6 @@ window.onload = function() {
     });
 }
 
+window.onfocus = function() {
+    CanvasBlackjack.renderField([0, 0, 10, 10]);
+}

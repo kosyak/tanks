@@ -10,7 +10,7 @@ var Keyboard = (function() {
         // vLog.log('keyboard up: ' + event.which);
         state[event.which] = false;
     };
-    MainLoop.push(call);
+    MainLoop.pushClear(call);
     function assign(keycode, callback) {
         vLog.log('keyboard event assign: ' + keycode);
         if (keycode && typeof callback === 'function') {

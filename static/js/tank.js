@@ -30,22 +30,22 @@ function Tank(context, keys, callback) {
                 self.move(keycode);
             });
         }
-    } else {
-        MainLoop.push(function() { self.place(); });
-    }
+    } 
+    MainLoop.push(function() { self.place(); });
 }
 
 Tank.prototype.place = function(x, y) {
     if (!isNaN(x) && !isNaN(y)) {
         this.pos = {x: x, y: y};
     }
-    CanvasBlackjack.renderField({ 
+    CanvasBlackjack.clear({ 
         x: Math.floor(this.pos.x / CanvasBlackjack.blockSize())-1, 
         y: Math.floor(this.pos.y / CanvasBlackjack.blockSize())-1, 
         width: 3, 
         height: 3 
     });
     this.context.drawImage(this.img, this.pos.x, this.pos.y);
+    this.lastMove = new Date(); // TODO: check Date.now() compatibility and use if possible
 }
 
 Tank.prototype.deltaFromCharCode = function(char_code) {
@@ -58,10 +58,8 @@ Tank.prototype.deltaFromCharCode = function(char_code) {
 };
 
 Tank.prototype.move = function(char_code) {
-    var delta = this.deltaFromCharCode(char_code),
-        time = new Date(); // TODO: check Date.now() compatibility and use if possible
+    var delta = this.deltaFromCharCode(char_code);
     this.pos.x += delta.x * this.speed * MainLoop.fps() * 0.4; // @waitForMovement
     this.pos.y += delta.y * this.speed * MainLoop.fps() * 0.4; // @waitForMovement
-    this.place();
-    this.lastMove = time;
+    // this.place();
 }
