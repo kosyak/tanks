@@ -15,37 +15,15 @@ var CanvasBlackjack = (function(id) {
             return false;
         }
         context = canvas.getContext('2d');
-        context.fillStyle = "#ffffaa";
-        context.fillRect(0, 0, 500, 300);
         this.renderField({ x: 0, y: 0, width: 10, height: 10 });
         MainLoop.pushClear(this.renderField);
     };
     
     function renderField(rect) {
-        var x, y;
-        if (rect && rect.length && rect.length == 4) {
-            rect = {
-                x: rect[0],
-                y: rect[1],
-                width: rect[2],
-                height: rect[3]
-            };
-        }
-        if (rect && !isNaN(rect.x) && !isNaN(rect.y) && !isNaN(rect.width) && !isNaN(rect.height)) {
-            for (x = Math.max(0, rect.x); x < Math.min(10, rect.x + rect.width); x += 1) {
-                for (y = Math.max(0, rect.y); y < Math.min(10, rect.y + rect.height); y += 1) {
-                    context.fillStyle = (x % 2 + y % 2) % 2 ? '#000000' : '#ffffff';
-                    context.fillRect(x * block_size, y * block_size, block_size, block_size);
-                }
-            }
+        if (!rect) {
+            Map.render({ tiles: toClear });
         } else {
-            toClear.forEach(function(elem) {
-                x = elem % 10;
-                y = Math.floor(elem / 10);
-                context.fillStyle = (x % 2 + y % 2) % 2 ? '#000000' : '#ffffff';
-                context.fillRect(x * block_size, y * block_size, block_size, block_size);
-            });
-            toClear = [];
+            Map.render(rect);
         }
     };
     
