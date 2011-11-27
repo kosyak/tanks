@@ -15,7 +15,7 @@ var vLog = (function(id) {
         if (msg.toString()) {
             container.innerHTML = '[' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '] ' + msg.toString();
         }
-        // console.log(msg);
+        console.log(msg);
     }
     return {
         log: log

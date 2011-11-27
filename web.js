@@ -27,12 +27,48 @@ function NotFound(msg){
 
 NotFound.prototype.__proto__ = Error.prototype;
 
-var has_bot = false;
-var express = require('express');
-var app = express.createServer(
-    // express.logger(),
-    // ress.bodyParser()
-);
+var bots = [],
+    express = require('express'),
+    app = express.createServer(
+        // express.logger(),
+        // ress.bodyParser()
+    ),
+    io = require('socket.io').listen(app);
+
+function authCallback(error, authorized) {
+    if (!authorized) {
+        console.error('WS auth failed: ', error);
+    } else {
+        console.log('WS auth OK');
+    }
+}
+
+function putBot(id, socket) {
+    if (bots.indexOf(id) == -1) {
+        socket.emit('bot', { type: 'create', position: { x: 140, y: 140 } });
+        console.log('bot sent');
+        bots.push(id);
+    }
+}
+
+/*io.configure(function (){
+    // io.enable('authorization');
+    io.set('authorization', function (handshakeData, callback) {
+        // console.log('handshake: ', handshakeData);
+        authCallback(null, true); // error first callback style
+        putBot(handshakeData.cookie);
+    });
+});*/
+
+// https://github.com/joyent/node/wiki/Socket.IO-and-Heroku
+io.set('transports', ['xhr-polling']);
+io.set('polling duration', 10);
+
+io.sockets.on('connection', function (socket) {
+    console.log('connect OK: ' + socket.store.id);
+    socket.emit('message', 'connect OK');
+    putBot(socket.store.id, socket);
+});
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
