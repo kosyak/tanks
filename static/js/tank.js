@@ -58,7 +58,7 @@ function Tank(context, keys, callback) {
     MainLoop.push(function() { self.place(); });
 }
 
-Tank.prototype.place = function(x, y) {
+Tank.prototype.place = function(x, y, no_render) {
     if (!isNaN(x) && !isNaN(y)) {
         this.pos = {x: x, y: y};
     }
@@ -68,7 +68,9 @@ Tank.prototype.place = function(x, y) {
         width: 3,
         height: 3
     });
-    this.context.drawImage(this.img, this.pos.x, this.pos.y);
+    if (!no_render) {
+        this.context.drawImage(this.img, this.pos.x, this.pos.y);
+    }
     this.lastMove = new Date(); // TODO: check Date.now() compatibility and use if possible
 }
 

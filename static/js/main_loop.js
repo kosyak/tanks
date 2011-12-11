@@ -9,6 +9,8 @@ var MainLoop = (function() {
         actual_fps = 0; // real fps
 
     function loop() {
+        WS.receive();
+
         for (var i = 0, _l = loop_clear_query.length; i < _l; i += 1) {
             if (typeof loop_clear_query[i] === 'function') {
                 loop_clear_query[i]();

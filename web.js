@@ -55,8 +55,8 @@ function putBot(id, socket) {
     var direction = { x: 1, y: 0 };
     setTimeout(function() {
       interval = setInterval(function() {
-        bot_pos.x += direction.x * 0.04 * 50 * (50/24);
-        bot_pos.y += direction.y * 0.04 * 50 * (50/24);
+        bot_pos.x += direction.x * 0.04 * 50;
+        bot_pos.y += direction.y * 0.04 * 50;
 
         if (bot_pos.x <= 20 && bot_pos.y <= 20) {
           direction = { x: 1, y: 0 };
@@ -71,7 +71,7 @@ function putBot(id, socket) {
         }
 
         io.sockets.in('room1').emit('bot', { type: 'place', position: bot_pos });
-      }, 1000 / 24);
+      }, 1000 / 50);
     }, 2000);
   }
 }

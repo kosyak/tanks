@@ -1,7 +1,8 @@
 var WS = (function() {
     var bot_tank,
         uuid = '',
-        socket = io.connect('http://' + location.host);
+        socket = io.connect('http://' + location.host),
+        events = [];
 
     socket.on('uuid', function (data) {
         uuid = data;
@@ -25,22 +26,32 @@ var WS = (function() {
 
     socket.on('bot', function(data) {
         // vLog.log('bot: ' + data);
-        switch (data.type) {
-            case 'create':
-                bot_tank = new Tank(CanvasBlackjack.context(), function() {
-                    bot_tank.place(data.position.x, data.position.y);
-                });
-            break;
-            case 'place': {
-                bot_tank = bot_tank || new Tank(CanvasBlackjack.context());
-                // console.log('place bot: ', data.position);
-                bot_tank.place(data.position.x, data.position.y);
-            }
-            break;
-            default:
-            break;
-        }
+        events.push(data);
+//            console.log(bot_tank, data.type, Date.now());
     });
+
+    // TODO: не совсем receive: функция ставит объекты по местам так, как сказал сервер
+    function receive() {
+        // console.log(events, events.length);
+        while (events.length) {
+            var data = events[0];
+            /*var data = */events.splice(0, 1);
+            switch (data.type) {
+                case 'create':
+                    bot_tank = new Tank(CanvasBlackjack.context(), function() {
+                        bot_tank.place(data.position.x, data.position.y);
+                    });
+                break;
+                case 'place': {
+                    bot_tank = bot_tank || new Tank(CanvasBlackjack.context());
+                    bot_tank.place(data.position.x, data.position.y, true);
+                }
+                break;
+                default:
+                break;
+            }
+        }
+    }
 
     function report() {
         socket.emit('report', {
@@ -55,6 +66,7 @@ var WS = (function() {
     MainLoop.push(function() { self.report(); }); */
 
     return {
-        report: report
+        report: report,
+        receive: receive
     };
 } ());
