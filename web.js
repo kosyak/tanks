@@ -29,6 +29,7 @@ NotFound.prototype.__proto__ = Error.prototype;
 
 var bots = [],
   bot_pos = { x: 0, y: 0 },
+  interval,
   express = require('express'),
   app = express.createServer(
       // express.logger(),
@@ -51,8 +52,7 @@ function putBot(id, socket) {
     console.log('bot sent');
     bots.push(id);
 
-    var direction = { x: 1, y: 0 },
-      interval;
+    var direction = { x: 1, y: 0 };
     setTimeout(function() {
       interval = setInterval(function() {
         bot_pos.x += direction.x * 0.04 * 50 * (50/24);
@@ -70,14 +70,18 @@ function putBot(id, socket) {
           direction = { x: 0, y: 1 };
         }
 
-        socket.emit('bot', { type: 'place', position: bot_pos });
+        io.sockets.in('room1').emit('bot', { type: 'place', position: bot_pos });
       }, 1000 / 24);
     }, 2000);
   }
 }
 
-function moveBot() {
+function moveBot(id, socket) {
+  if (!interval) {
 
+  } else {
+
+  }
 }
 
 /*io.configure(function (){
@@ -103,7 +107,9 @@ io.configure(function (){
 io.sockets.on('connection', function (socket) {
   console.log('connect OK: ' + socket.store.id);
   socket.emit('message', 'connect OK');
-  putBot(socket.store.id, socket);
+  socket.join('room1');
+
+  putBot(1, socket);
 
   socket.on('report', function (data) {
 

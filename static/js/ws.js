@@ -32,6 +32,7 @@ var WS = (function() {
                 });
             break;
             case 'place': {
+                bot_tank = bot_tank || new Tank(CanvasBlackjack.context());
                 // console.log('place bot: ', data.position);
                 bot_tank.place(data.position.x, data.position.y);
             }
