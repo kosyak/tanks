@@ -73,7 +73,7 @@ function putBot(id, socket) {
 
         io.sockets.in('room1').emit('bot', { type: 'place', position: bot_pos });
         io.sockets.in('room1').emit('clients', { clients: clients });
-        console.log('clients: ', clients);
+        // console.log('clients: ', clients);
       }, 1000 / 50);
     }, 2000);
   }
