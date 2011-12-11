@@ -28,12 +28,13 @@ function NotFound(msg){
 NotFound.prototype.__proto__ = Error.prototype;
 
 var bots = [],
-    express = require('express'),
-    app = express.createServer(
-        // express.logger(),
-        // ress.bodyParser()
-    ),
-    io = require('socket.io').listen(app);
+  bot_pos = { x: 0, y: 0 },
+  express = require('express'),
+  app = express.createServer(
+      // express.logger(),
+      // ress.bodyParser()
+  ),
+  io = require('socket.io').listen(app);
 
 function authCallback(error, authorized) {
     if (!authorized) {
@@ -44,11 +45,39 @@ function authCallback(error, authorized) {
 }
 
 function putBot(id, socket) {
-    if (bots.indexOf(id) == -1) {
-        socket.emit('bot', { type: 'create', position: { x: 140, y: 140 } });
-        console.log('bot sent');
-        bots.push(id);
-    }
+  if (bots.indexOf(id) == -1) {
+    bot_pos = { x: 140, y: 140 };
+    socket.emit('bot', { type: 'create', position: bot_pos });
+    console.log('bot sent');
+    bots.push(id);
+
+    var direction = { x: 1, y: 0 },
+      interval;
+    setTimeout(function() {
+      interval = setInterval(function() {
+        bot_pos.x += direction.x * 0.04 * 50;
+        bot_pos.y += direction.y * 0.04 * 50;
+
+        if (bot_pos.x <= 20 && bot_pos.y <= 20) {
+          direction = { x: 1, y: 0 };
+        } else if (bot_pos.x >= 400 && bot_pos.y <= 20) {
+          direction = { x: 0, y: 1 };
+        } else if (bot_pos.x >= 400 && bot_pos.y >= 400) {
+          direction = { x: -1, y: 0 };
+        } else if (bot_pos.x <= 20 && bot_pos.y >= 400) {
+          direction = { x: 0, y: -1 };
+        } else if (bot_pos.x >= 400) {
+          direction = { x: 0, y: 1 };
+        }
+
+        socket.emit('bot', { type: 'place', position: bot_pos });
+      }, 1000 / 50);
+    }, 2000);
+  }
+}
+
+function moveBot() {
+
 }
 
 /*io.configure(function (){
@@ -77,7 +106,7 @@ io.sockets.on('connection', function (socket) {
   putBot(socket.store.id, socket);
 
   socket.on('report', function (data) {
-    socket.emit('bot', { type: 'place', position: { x: data.tanks[0].x + 70, y: data.tanks[0].y + 70 } });
+
   });
 
 });
