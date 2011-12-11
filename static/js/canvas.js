@@ -1,16 +1,12 @@
-function canvasSupport () {
-    return !!document.createElement('testcanvas').getContext;
-}
-
 var CanvasBlackjack = (function(id) {
     var canvas,
         context,
         block_size = 60, // размер одного квадрата поля
         toClear = []; // номера клеток, которые будут очищены
-    
+
     function init() {
         canvas = document.getElementById(id);
-        if (!canvas || !canvas.getContext) { 
+        if (!canvas || !canvas.getContext) {
             vLog.log('Canvas element not found');
             return false;
         }
@@ -18,7 +14,7 @@ var CanvasBlackjack = (function(id) {
         this.renderField({ x: 0, y: 0, width: 10, height: 10 });
         MainLoop.pushClear(this.renderField);
     };
-    
+
     function renderField(rect) {
         if (!rect) {
             Map.render({ tiles: toClear });
@@ -26,12 +22,12 @@ var CanvasBlackjack = (function(id) {
             Map.render(rect);
         }
     };
-    
+
     function center() {
         canvas.style.left = Math.max(0, 0.5 * (document.width - canvas.clientWidth)) + 'px';
         canvas.style.top  = Math.max(0, 0.5 * (document.height - canvas.clientHeight)) + 'px';
     };
-    
+
     function clear(cells) {
         if (cells && !isNaN(cells.x) && !isNaN(cells.y) && !isNaN(cells.width) && !isNaN(cells.height)) {
             for (var x = cells.x; x < cells.width + cells.x; x += 1) {
@@ -42,7 +38,7 @@ var CanvasBlackjack = (function(id) {
                 }
             }
         } else {
-            cells.forEach(function(cell) { 
+            cells.forEach(function(cell) {
                 if (toClear.indexOf(cell) == -1) {
                     toClear.push(cell);
                 }
@@ -51,7 +47,7 @@ var CanvasBlackjack = (function(id) {
     };
     /*
     function dontClear(cells) {
-        cells.forEach(function(cell) { 
+        cells.forEach(function(cell) {
             if (toClear.indexOf(cell) != -1) {
                 toClear.splice(toClear.indexOf(cell), 1);
             }

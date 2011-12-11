@@ -65,9 +65,14 @@ io.set('transports', ['xhr-polling']);
 io.set('polling duration', 10);
 
 io.sockets.on('connection', function (socket) {
-    console.log('connect OK: ' + socket.store.id);
-    socket.emit('message', 'connect OK');
-    putBot(socket.store.id, socket);
+  console.log('connect OK: ' + socket.store.id);
+  socket.emit('message', 'connect OK');
+  putBot(socket.store.id, socket);
+
+  socket.on('report', function (data) {
+    socket.emit('bot', { type: 'place', position: { x: data.tanks[0].x + 70, y: data.tanks[0].y + 70 } });
+  });
+
 });
 
 app.configure(function(){
@@ -95,26 +100,6 @@ app.configure('production', function(){
 
 app.get('/', function(req, res){
     res.render('index', { layout: false, pageTitle: 'Tanks will be here soon. We promise.', youAreUsingJade: true, app_id: '' });
-});
-
-app.get('/bot', function(req, res) {
-    if (!has_bot) {
-        // has_bot = true;
-        setTimeout(function() {
-            sse.send({ type: 'create', position: { x: 140, y: 140 } }, 'bot');
-            res.end();
-        }, 2000);
-    }
-});
-
-app.get('/stream', function(req, res) {
-    sse.subscribe(req, res);
-    sse.send('SSE init OK');
-});
-
-app.post('/unsubscribe/:id', function(req, res) {
-    sse.unsubscribe(req.params.id);
-    res.end();
 });
 
 app.get(/^\/node_modules.*/, function(req, res){

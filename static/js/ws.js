@@ -3,11 +3,6 @@ var WS = (function() {
         uuid = '',
         socket = io.connect('http://' + location.host);
 
-    socket.on('news', function (data) {
-        vLog.log('ws', data);
-        socket.emit('my other event', { my: 'data' });
-    });
-
     socket.on('uuid', function (data) {
         uuid = data;
         vLog.log('uuid: ' + uuid);
@@ -29,17 +24,36 @@ var WS = (function() {
     }, false); */
 
     socket.on('bot', function(data) {
-        vLog.log('bot: ' + data);
+        // vLog.log('bot: ' + data);
         switch (data.type) {
             case 'create':
                 bot_tank = new Tank(CanvasBlackjack.context(), function() {
-                    vLog.log('set pos: ', data.position);
                     bot_tank.place(data.position.x, data.position.y);
                 });
+            break;
+            case 'place': {
+                // console.log('place bot: ', data.position);
+                bot_tank.place(data.position.x, data.position.y);
+            }
             break;
             default:
             break;
         }
     });
-    return {};
+
+    function report() {
+        socket.emit('report', {
+            uuid: uuid,
+            time: Date.now(),
+            map: Map.data(),
+            tanks: TanksData()
+        });
+    };
+
+    /* var self = this;
+    MainLoop.push(function() { self.report(); }); */
+
+    return {
+        report: report
+    };
 } ());
