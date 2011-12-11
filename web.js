@@ -60,9 +60,11 @@ function putBot(id, socket) {
     });
 });*/
 
+/*
 // https://github.com/joyent/node/wiki/Socket.IO-and-Heroku
 io.set('transports', ['xhr-polling']);
 io.set('polling duration', 10);
+*/
 
 io.sockets.on('connection', function (socket) {
   console.log('connect OK: ' + socket.store.id);
