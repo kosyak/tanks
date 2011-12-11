@@ -66,6 +66,11 @@ io.set('transports', ['xhr-polling']);
 io.set('polling duration', 10);
 */
 
+io.configure(function (){
+  io.set('log level', 1);
+});
+
+
 io.sockets.on('connection', function (socket) {
   console.log('connect OK: ' + socket.store.id);
   socket.emit('message', 'connect OK');
