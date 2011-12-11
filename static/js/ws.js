@@ -1,12 +1,13 @@
 var WS = (function() {
     var bot_tank,
+        client_tanks = {},
         uuid = '',
         socket = io.connect('http://' + location.host),
         events = [];
 
     socket.on('uuid', function (data) {
-        uuid = data;
-        vLog.log('uuid: ' + uuid);
+        uuid = data.uuid;
+        console.log('uuid: ', data.uuid);
     });
 
     socket.on('message', function(data) {
@@ -30,6 +31,11 @@ var WS = (function() {
 //            console.log(bot_tank, data.type, Date.now());
     });
 
+    socket.on('clients', function(data) {
+        events.push({ type: 'clients', clients: data.clients });
+        if (typeof ok_data === 'undefined') { console.log(data); ok_data = true; }
+    });
+
     // TODO: не совсем receive: функция ставит объекты по местам так, как сказал сервер
     function receive() {
         // console.log(events, events.length);
@@ -47,6 +53,15 @@ var WS = (function() {
                     bot_tank.place(data.position.x, data.position.y, true);
                 }
                 break;
+                case 'clients':
+                    for (var id in data.clients) {
+                        if (id !== uuid) {
+                            // if (typeof client_tanks[uuid] === 'undefined') { console.log('new tank: ', data.clients[uuid]); }
+                            client_tanks[id] = client_tanks[id] || new Tank(CanvasBlackjack.context());
+                            client_tanks[id].place(data.clients[id].x, data.clients[id].y, true);
+                        }
+                    }
+                break
                 default:
                 break;
             }
