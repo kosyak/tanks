@@ -1,3 +1,21 @@
+var globalTankCache = [];
+
+// Directions
+var DIR_UP = 0,
+    DIR_RIGHT = 1,
+    DIR_DOWN = 2,
+    DIR_LEFT = 3,
+    DIR_DELTA = [ '0,-1', '1,0', '0,1', '-1,0' ];
+
+// TODO: сделать ее 'static' для Tank
+function TanksData() {
+    var data = [];
+    for (var i = 0; i < globalTankCache.length; i += 1) {
+        data.push(globalTankCache[i].data());
+    }
+    return data;
+}
+
 /**
  * Объект танка
  *
@@ -5,16 +23,6 @@
  * @param Object keys массив кодов клавиш { left: key_left, top: key_top, right: key_right, down: key_bottom }
  *
  **/
-
- var globalTankCache = [];
- // TODO: сделать ее 'static' для Tank
- function TanksData() {
-     var data = [];
-     for (var i = 0; i < globalTankCache.length; i += 1) {
-         data.push(globalTankCache[i].data());
-     }
-     return data;
- }
 
 function Tank(context, keys, callback) {
     globalTankCache.push(this);
@@ -24,6 +32,8 @@ function Tank(context, keys, callback) {
     this.imgURI = '/img/tank.png'; // URI! Yo!
     this.img = new Image();
     this.img.src = this.imgURI;
+    this.direction = DIR_UP;
+    this.moved = false; // детектор движения на данном ходе, помогает поворачивать картинку танка
     if (typeof callback === 'function' || typeof keys === 'function') {
         this.img.onload = function() { this.lastMove = new Date(); (typeof callback === 'function') ? callback() : keys(); }
     }
@@ -59,6 +69,10 @@ function Tank(context, keys, callback) {
 }
 
 Tank.prototype.place = function(x, y, no_render) {
+    if (x === true || x === false) {
+        no_render = x;
+        x = y = null;
+    }
     if (!isNaN(x) && !isNaN(y)) {
         this.pos = {x: x, y: y};
     }
@@ -69,7 +83,17 @@ Tank.prototype.place = function(x, y, no_render) {
         height: 3
     });
     if (!no_render) {
-        this.context.drawImage(this.img, this.pos.x, this.pos.y);
+
+        this.context.save();
+        this.context.setTransform(1, 0, 0, 1, 0, 0);
+        this.context.translate(this.pos.x + this.img.naturalWidth / 2, this.pos.y + this.img.naturalHeight / 2);
+        this.context.rotate(this.direction * Math.PI / 2);
+        this.context.drawImage(this.img, - this.img.naturalWidth / 2, - this.img.naturalHeight / 2);
+        this.context.restore();
+
+        // this.moved = false;
+
+        // this.context.drawImage(this.img, this.pos.x, this.pos.y);
     }
     this.lastMove = new Date(); // TODO: check Date.now() compatibility and use if possible
 }
@@ -84,9 +108,15 @@ Tank.prototype.deltaFromCharCode = function(char_code) {
 };
 
 Tank.prototype.move = function(char_code) {
-    var delta = this.deltaFromCharCode(char_code);
+    // if (!this.moved) {}
+    var delta = this.deltaFromCharCode(char_code),
+        new_dir = DIR_DELTA.indexOf(delta.x + ',' + delta.y);
+    if (new_dir > -1) {
+        this.direction = new_dir;
+    }
     this.pos.x += delta.x * this.speed * MainLoop.fps();
     this.pos.y += delta.y * this.speed * MainLoop.fps();
+    // this.moved = true;
 }
 
 Tank.prototype.data = function() {
@@ -94,6 +124,6 @@ Tank.prototype.data = function() {
 }
 
 Tank.prototype.remove = function() {
-    this.place(this.pos.x, this.pos.y, true);
+    this.place(true);
     MainLoop.remove(this.queryIndex);
 }
