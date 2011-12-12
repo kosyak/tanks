@@ -34,6 +34,7 @@ function Tank(context, keys, callback) {
     this.img.src = this.imgURI;
     this.direction = DIR_UP;
     this.moved = false; // детектор движения на данном ходе, помогает поворачивать картинку танка
+    this.delta = { x: 0, y: 0 }; // помогает, если нажато несколько клавиш движения, обрабатываем только последнюю
     if (typeof callback === 'function' || typeof keys === 'function') {
         this.img.onload = function() { this.lastMove = new Date(); (typeof callback === 'function') ? callback() : keys(); }
     }
@@ -92,6 +93,7 @@ Tank.prototype.place = function(x, y, no_render) {
         this.context.restore();
 
         // this.moved = false;
+        this.delta = { x: 0, y: 0 };
 
         // this.context.drawImage(this.img, this.pos.x, this.pos.y);
     }
@@ -114,8 +116,9 @@ Tank.prototype.move = function(char_code) {
     if (new_dir > -1) {
         this.direction = new_dir;
     }
-    this.pos.x += delta.x * this.speed * MainLoop.fps();
-    this.pos.y += delta.y * this.speed * MainLoop.fps();
+    this.pos.x += (delta.x - this.delta.x) * this.speed * MainLoop.fps();
+    this.pos.y += (delta.y - this.delta.y) * this.speed * MainLoop.fps();
+    this.delta = delta;
     // this.moved = true;
 }
 
