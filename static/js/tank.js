@@ -55,7 +55,7 @@ function Tank(context, keys, callback) {
             });
         }
     }
-    MainLoop.push(function() { self.place(); });
+    this.queryIndex = MainLoop.push(function() { self.place(); });
 }
 
 Tank.prototype.place = function(x, y, no_render) {
@@ -91,4 +91,9 @@ Tank.prototype.move = function(char_code) {
 
 Tank.prototype.data = function() {
     return this.pos;
+}
+
+Tank.prototype.remove = function() {
+    this.place(this.pos.x, this.pos.y, true);
+    MainLoop.remove(this.queryIndex);
 }

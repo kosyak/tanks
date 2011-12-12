@@ -35,13 +35,23 @@ var MainLoop = (function() {
         timeouts.fps_counter = setTimeout(StartFPSCounter, 1000 * sec, sec);
     }
 
+    /**
+     * Возвращает номер функции в очереди.
+     * Полезно при удалени из очереди
+     */
     function pushQuery(func) {
         loop_query.push(func);
+        return loop_query.length - 1;
+    }
+
+    function removeQuery(index) {
+        loop_query[Number(index)] = null;
     }
 
     function pushClearQuery(func) {
         loop_clear_query.push(func);
         vLog.log('pushed to clear. type: ' + (typeof func));
+        return loop_clear_query.length - 1;
     }
 
     function startLoop() {
@@ -61,6 +71,7 @@ var MainLoop = (function() {
         },
         stop: stopLoop,
         push: pushQuery,
+        remove: removeQuery,
         pushClear: pushClearQuery,
         fps: function() { return fps; }
     }

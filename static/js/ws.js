@@ -28,12 +28,14 @@ var WS = (function() {
     socket.on('bot', function(data) {
         // vLog.log('bot: ' + data);
         events.push(data);
-//            console.log(bot_tank, data.type, Date.now());
     });
 
     socket.on('clients', function(data) {
         events.push({ type: 'clients', clients: data.clients });
-        if (typeof ok_data === 'undefined') { console.log(data); ok_data = true; }
+    });
+
+    socket.on('remove', function(data) {
+        events.push({ type: 'remove', id: data.id });
     });
 
     // TODO: не совсем receive: функция ставит объекты по местам так, как сказал сервер
@@ -61,7 +63,11 @@ var WS = (function() {
                             client_tanks[id].place(data.clients[id].x, data.clients[id].y, true);
                         }
                     }
-                break
+                break;
+                case 'remove':
+                    client_tanks[data.id].remove();
+                    delete client_tanks[data.id];
+                break;
                 default:
                 break;
             }
