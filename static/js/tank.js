@@ -32,11 +32,17 @@ function Tank(context, keys, callback) {
     this.imgURI = '/img/tank.png'; // URI! Yo!
     this.img = new Image();
     this.img.src = this.imgURI;
+    this.rotate_delta = 0;
     this.direction = DIR_UP;
     this.moved = false; // детектор движения на данном ходе, помогает поворачивать картинку танка
     this.delta = { x: 0, y: 0 }; // помогает, если нажато несколько клавиш движения, обрабатываем только последнюю
+    var self = this;
     if (typeof callback === 'function' || typeof keys === 'function') {
-        this.img.onload = function() { this.lastMove = new Date(); (typeof callback === 'function') ? callback() : keys(); }
+        this.img.onload = function() {
+            self.lastMove = new Date();
+            self.rotate_delta = 0.5 * Math.abs(self.img.naturalWidth - self.img.naturalHeight);
+            (typeof callback === 'function') ? callback() : keys();
+        }
     }
     this.deltaChar = {};
 
@@ -69,6 +75,24 @@ function Tank(context, keys, callback) {
     this.queryIndex = MainLoop.push(function() { self.place(); });
 }
 
+Tank.prototype.width = function(direction) {
+    direction = direction || this.direction;
+    if (direction === DIR_UP || direction === DIR_DOWN) {
+        return this.img.naturalWidth;
+    } else {
+        return this.img.naturalHeight;
+    }
+}
+
+Tank.prototype.height = function(direction) {
+    direction = direction || this.direction;
+    if (direction === DIR_UP || direction === DIR_DOWN) {
+        return this.img.naturalHeight;
+    } else {
+        return this.img.naturalWidth;
+    }
+}
+
 Tank.prototype.place = function(x, y, no_render) {
     if (x === true || x === false) {
         no_render = x;
@@ -84,13 +108,41 @@ Tank.prototype.place = function(x, y, no_render) {
         height: 3
     });
     if (!no_render) {
+        if (this.rotation) {
+            if (this.rotation.direction !== this.direction) {
+                if ([DIR_UP, DIR_DOWN].indexOf(this.rotation.direction) > -1 && [DIR_LEFT, DIR_RIGHT].indexOf(this.direction) > -1) {
+                    this.pos.x += this.rotate_delta;
+                    this.pos.y -= this.rotate_delta;
+                } else if ([DIR_UP, DIR_DOWN].indexOf(this.direction) > -1 && [DIR_LEFT, DIR_RIGHT].indexOf(this.rotation.direction) > -1) {
+                    this.pos.x -= this.rotate_delta;
+                    this.pos.y += this.rotate_delta;
+                }
+            } else {
+                this.pos.x += (this.rotation.delta.x - this.delta.x) * this.speed * MainLoop.fps();
+                this.pos.y += (this.rotation.delta.y - this.delta.y) * this.speed * MainLoop.fps();
+            }
+        }
 
+        var direction = this.rotation ? this.rotation.direction : this.direction;
         this.context.save();
         this.context.setTransform(1, 0, 0, 1, 0, 0);
-        this.context.translate(this.pos.x + this.img.naturalWidth / 2, this.pos.y + this.img.naturalHeight / 2);
-        this.context.rotate(this.direction * Math.PI / 2);
-        this.context.drawImage(this.img, - this.img.naturalWidth / 2, - this.img.naturalHeight / 2);
+        this.context.translate(this.pos.x + this.width(direction) / 2, this.pos.y + this.height(direction) / 2);
+
+        if (direction === DIR_LEFT) {
+            this.context.translate( - this.rotate_delta, - this.rotate_delta);
+        } else if (direction === DIR_RIGHT) {
+            this.context.translate(this.rotate_delta, this.rotate_delta);
+        }
+
+
+        this.context.rotate(direction * Math.PI / 2);
+        this.context.drawImage(this.img, - this.width(direction) / 2, - this.height(direction) / 2);
         this.context.restore();
+
+        if (this.rotation) {
+            this.direction = this.rotation.direction;
+            this.rotation = null;
+        }
 
         // this.moved = false;
         this.delta = { x: 0, y: 0 };
@@ -110,16 +162,17 @@ Tank.prototype.deltaFromCharCode = function(char_code) {
 };
 
 Tank.prototype.move = function(char_code) {
-    // if (!this.moved) {}
     var delta = this.deltaFromCharCode(char_code),
         new_dir = DIR_DELTA.indexOf(delta.x + ',' + delta.y);
-    if (new_dir > -1) {
-        this.direction = new_dir;
+    if (new_dir > -1 && new_dir !== this.direction) {
+        this.rotation = { direction: new_dir, delta: delta };
+        // this.direction = new_dir;
+    } else {
+        this.rotation = null;
+        this.pos.x += (delta.x - this.delta.x) * this.speed * MainLoop.fps();
+        this.pos.y += (delta.y - this.delta.y) * this.speed * MainLoop.fps();
+        // this.delta = delta;
     }
-    this.pos.x += (delta.x - this.delta.x) * this.speed * MainLoop.fps();
-    this.pos.y += (delta.y - this.delta.y) * this.speed * MainLoop.fps();
-    this.delta = delta;
-    // this.moved = true;
 }
 
 Tank.prototype.data = function() {

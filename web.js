@@ -40,13 +40,13 @@ function putBot(id, socket) {
         bot_pos.x += direction.x * 0.04 * 50;
         bot_pos.y += direction.y * 0.04 * 50;
 
-        if (bot_pos.x <= 20 && bot_pos.y <= 20) {
+        if (bot_pos.x <= 70 && bot_pos.y <= 70) {
           direction = { x: 1, y: 0 };
-        } else if (bot_pos.x >= 400 && bot_pos.y <= 20) {
+        } else if (bot_pos.x >= 400 && bot_pos.y <= 70) {
           direction = { x: 0, y: 1 };
         } else if (bot_pos.x >= 400 && bot_pos.y >= 400) {
           direction = { x: -1, y: 0 };
-        } else if (bot_pos.x <= 20 && bot_pos.y >= 400) {
+        } else if (bot_pos.x <= 70 && bot_pos.y >= 400) {
           direction = { x: 0, y: -1 };
         } else if (bot_pos.x >= 400) {
           direction = { x: 0, y: 1 };
