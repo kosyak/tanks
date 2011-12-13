@@ -34,8 +34,6 @@ function Tank(context, keys, callback) {
     this.img.src = this.imgURI;
     this.rotate_delta = 0;
     this.direction = DIR_UP;
-    this.moved = false; // детектор движения на данном ходе, помогает поворачивать картинку танка
-    this.delta = { x: 0, y: 0 }; // помогает, если нажато несколько клавиш движения, обрабатываем только последнюю
     var self = this;
     if (typeof callback === 'function' || typeof keys === 'function') {
         this.img.onload = function() {
@@ -93,8 +91,12 @@ Tank.prototype.height = function(direction) {
     }
 }
 
-Tank.prototype.place = function(x, y, no_render) {
-    if (x === true || x === false) {
+Tank.prototype.place = function(x, y, no_render, set_direction) {
+    if (typeof no_render === 'number' && no_render >= 0 && no_render <= 3) {
+        set_direction = no_render;
+        no_render = null;
+    }
+    if (typeof x === 'boolean') {
         no_render = x;
         x = y = null;
     }
@@ -107,6 +109,10 @@ Tank.prototype.place = function(x, y, no_render) {
         width: 3,
         height: 3
     });
+    if (typeof set_direction !== 'undefined') {
+        this.direction = set_direction;
+        this.rotation = null;
+    }
     if (!no_render) {
         if (this.rotation) {
             if (this.rotation.direction !== this.direction) {
@@ -118,8 +124,8 @@ Tank.prototype.place = function(x, y, no_render) {
                     this.pos.y += this.rotate_delta;
                 }
             } else {
-                this.pos.x += (this.rotation.delta.x - this.delta.x) * this.speed * MainLoop.fps();
-                this.pos.y += (this.rotation.delta.y - this.delta.y) * this.speed * MainLoop.fps();
+                this.pos.x += this.rotation.delta.x * this.speed * MainLoop.fps();
+                this.pos.y += this.rotation.delta.y * this.speed * MainLoop.fps();
             }
         }
 
@@ -144,11 +150,6 @@ Tank.prototype.place = function(x, y, no_render) {
             this.direction = this.rotation.direction;
             this.rotation = null;
         }
-
-        // this.moved = false;
-        this.delta = { x: 0, y: 0 };
-
-        // this.context.drawImage(this.img, this.pos.x, this.pos.y);
     }
     this.lastMove = new Date(); // TODO: check Date.now() compatibility and use if possible
 }
@@ -167,17 +168,19 @@ Tank.prototype.move = function(char_code) {
         new_dir = DIR_DELTA.indexOf(delta.x + ',' + delta.y);
     if (new_dir > -1 && new_dir !== this.direction) {
         this.rotation = { direction: new_dir, delta: delta };
-        // this.direction = new_dir;
     } else {
         this.rotation = null;
-        this.pos.x += (delta.x - this.delta.x) * this.speed * MainLoop.fps();
-        this.pos.y += (delta.y - this.delta.y) * this.speed * MainLoop.fps();
-        // this.delta = delta;
+        this.pos.x += delta.x * this.speed * MainLoop.fps();
+        this.pos.y += delta.y * this.speed * MainLoop.fps();
+        if (Map.collide(this)) {
+            this.pos.x -= delta.x * this.speed * MainLoop.fps();
+            this.pos.y -= delta.y * this.speed * MainLoop.fps();
+        }
     }
 }
 
 Tank.prototype.data = function() {
-    return this.pos;
+    return { x: this.pos.x, y: this.pos.y, direction: this.direction };
 }
 
 Tank.prototype.remove = function() {

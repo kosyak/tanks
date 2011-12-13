@@ -1,5 +1,11 @@
 var sse = require('./sse.js');
 
+var DIR_UP = 0,
+    DIR_RIGHT = 1,
+    DIR_DOWN = 2,
+    DIR_LEFT = 3,
+    DIR_DELTA = [ '0,-1', '1,0', '0,1', '-1,0' ];
+
 function NotFound(msg){
     this.name = 'NotFound';
     Error.call(this, msg);
@@ -34,25 +40,32 @@ function putBot(id, socket) {
     console.log('bot sent');
     bots.push(id);
 
-    var direction = { x: 1, y: 0 };
+    var delta = { x: 1, y: 0 },
+      direction = DIR_RIGHT;
     setTimeout(function() {
       interval = setInterval(function() {
-        bot_pos.x += direction.x * 0.04 * 50;
-        bot_pos.y += direction.y * 0.04 * 50;
+        bot_pos.x += delta.x * 0.04 * 50;
+        bot_pos.y += delta.y * 0.04 * 50;
 
         if (bot_pos.x <= 70 && bot_pos.y <= 70) {
-          direction = { x: 1, y: 0 };
+          delta = { x: 1, y: 0 };
+          direction = DIR_RIGHT;
         } else if (bot_pos.x >= 400 && bot_pos.y <= 70) {
-          direction = { x: 0, y: 1 };
+          delta = { x: 0, y: 1 };
+          direction = DIR_DOWN;
         } else if (bot_pos.x >= 400 && bot_pos.y >= 400) {
-          direction = { x: -1, y: 0 };
+          delta = { x: -1, y: 0 };
+          direction = DIR_LEFT;
         } else if (bot_pos.x <= 70 && bot_pos.y >= 400) {
-          direction = { x: 0, y: -1 };
+          delta = { x: 0, y: -1 };
+          direction = DIR_UP;
         } else if (bot_pos.x >= 400) {
-          direction = { x: 0, y: 1 };
+          delta = { x: 0, y: 1 };
+          direction = DIR_DOWN;
         }
 
-        io.sockets.in('room1').emit('bot', { type: 'place', position: bot_pos });
+        io.sockets.in('room1').emit('bot', { type: 'place', position: bot_pos, direction: direction });
+        //console.log('direction: ' + direction);
         io.sockets.in('room1').emit('clients', { clients: clients });
         // console.log('clients: ', clients);
       }, 1000 / 50);
@@ -104,8 +117,10 @@ io.sockets.on('connection', function (socket) {
   socket.on('report', function (data) {
     // console.log('report data', data);
     clients[uuid] = { // === data.uuid ??
+      // с клиента приходят данные ровно об одном танке
       x: data.tanks[0].x,
-      y: data.tanks[0].y
+      y: data.tanks[0].y,
+      direction: data.tanks[0].direction
     }
   });
   socket.on('disconnect', function() {

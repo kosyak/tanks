@@ -47,12 +47,12 @@ var WS = (function() {
             switch (data.type) {
                 case 'create':
                     bot_tank = new Tank(CanvasBlackjack.context(), function() {
-                        bot_tank.place(data.position.x, data.position.y);
+                        bot_tank.place(data.position.x, data.position.y, data.direction);
                     });
                 break;
                 case 'place': {
                     bot_tank = bot_tank || new Tank(CanvasBlackjack.context());
-                    bot_tank.place(data.position.x, data.position.y, true);
+                    bot_tank.place(data.position.x, data.position.y, true, data.direction);
                 }
                 break;
                 case 'clients':
@@ -60,7 +60,7 @@ var WS = (function() {
                         if (id !== uuid) {
                             // if (typeof client_tanks[uuid] === 'undefined') { console.log('new tank: ', data.clients[uuid]); }
                             client_tanks[id] = client_tanks[id] || new Tank(CanvasBlackjack.context());
-                            client_tanks[id].place(data.clients[id].x, data.clients[id].y, true);
+                            client_tanks[id].place(data.clients[id].x, data.clients[id].y, true, data.clients[id].direction);
                         }
                     }
                 break;
