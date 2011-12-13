@@ -128,6 +128,7 @@ Tank.prototype.place = function(x, y, no_render) {
         this.context.setTransform(1, 0, 0, 1, 0, 0);
         this.context.translate(this.pos.x + this.width(direction) / 2, this.pos.y + this.height(direction) / 2);
 
+        // Не понимаю, почему нужно это смещение. Пока считаем за HACK
         if (direction === DIR_LEFT) {
             this.context.translate( - this.rotate_delta, - this.rotate_delta);
         } else if (direction === DIR_RIGHT) {
