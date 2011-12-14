@@ -11,7 +11,9 @@ var DIR_UP = 0,
 function TanksData() {
     var data = [];
     for (var i = 0; i < globalTankCache.length; i += 1) {
-        data.push(globalTankCache[i].data());
+        if (globalTankCache[i].key) {
+            data.push(globalTankCache[i].data());
+        }
     }
     return data;
 }
@@ -32,7 +34,8 @@ function Tank(context, keys, callback) {
     this.imgURI = '/img/tank.png'; // URI! Yo!
     this.img = new Image();
     this.img.src = this.imgURI;
-    this.rotate_delta = 0;
+    // TODO: fuck this shit!
+    this.rotate_delta = 5;// (this.img.naturalWidth && this.img.naturalHeight) ? 0.5 * Math.abs(self.img.naturalWidth - self.img.naturalHeight) : 0;
     this.direction = DIR_UP;
     var self = this;
     if (typeof callback === 'function' || typeof keys === 'function') {
@@ -130,18 +133,18 @@ Tank.prototype.place = function(x, y, no_render, set_direction) {
         }
 
         var direction = this.rotation ? this.rotation.direction : this.direction;
-        this.context.save();
-        this.context.setTransform(1, 0, 0, 1, 0, 0);
-        this.context.translate(this.pos.x + this.width(direction) / 2, this.pos.y + this.height(direction) / 2);
 
         // Не понимаю, почему нужно это смещение. Пока считаем за HACK
+        var hack_delta = { x: 0, y: 0 };
         if (direction === DIR_LEFT) {
-            this.context.translate( - this.rotate_delta, - this.rotate_delta);
+            hack_delta = { x: - this.rotate_delta, y: - this.rotate_delta };
         } else if (direction === DIR_RIGHT) {
-            this.context.translate(this.rotate_delta, this.rotate_delta);
+            hack_delta = { x: this.rotate_delta, y: this.rotate_delta };
         }
 
-
+        this.context.save();
+        this.context.setTransform(1, 0, 0, 1, 0, 0);
+        this.context.translate(hack_delta.x + this.pos.x + this.width(direction) / 2, hack_delta.y + this.pos.y + this.height(direction) / 2);
         this.context.rotate(direction * Math.PI / 2);
         this.context.drawImage(this.img, - this.width(direction) / 2, - this.height(direction) / 2);
         this.context.restore();
@@ -172,7 +175,7 @@ Tank.prototype.move = function(char_code) {
         this.rotation = null;
         this.pos.x += delta.x * this.speed * MainLoop.fps();
         this.pos.y += delta.y * this.speed * MainLoop.fps();
-        if (Map.collide(this)) {
+        if (Map.collide(this) || this.collide()) {
             this.pos.x -= delta.x * this.speed * MainLoop.fps();
             this.pos.y -= delta.y * this.speed * MainLoop.fps();
         }
@@ -186,4 +189,24 @@ Tank.prototype.data = function() {
 Tank.prototype.remove = function() {
     this.place(true);
     MainLoop.remove(this.queryIndex);
+}
+
+Tank.prototype.collide = function() {
+    if (!this.key) {
+        return false;
+    }
+    for (var i = 0; i < globalTankCache.length; i += 1) {
+        var tank = globalTankCache[i];
+        if (tank !== this) {
+            if (this.pos.x + this.width() < tank.pos.x ||
+                this.pos.x > tank.pos.x + tank.width() ||
+                this.pos.y + this.height() < tank.pos.y ||
+                this.pos.y > tank.pos.y + tank.height()) {
+                continue;
+            } else {
+                return true;
+            }
+        }
+    }
+    return false;
 }

@@ -13,7 +13,7 @@ window.onload = function() {
 
     var tank = new Tank(CanvasBlackjack.context(), { left: 37, top: 38, right: 40, down: 39 }, function() {
         tank.place(70, 70);
-        // MainLoop.push(function() { vLog.log('collide: ' + Map.collide(tank)); });
+        // MainLoop.push(function() { vLog.log('x: ' + tank.pos.x + '; y: ' + tank.pos.y); });
         MainLoop.start();
     });
 }

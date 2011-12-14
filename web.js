@@ -1,15 +1,15 @@
 var sse = require('./sse.js');
 
 var DIR_UP = 0,
-    DIR_RIGHT = 1,
-    DIR_DOWN = 2,
-    DIR_LEFT = 3,
-    DIR_DELTA = [ '0,-1', '1,0', '0,1', '-1,0' ];
+  DIR_RIGHT = 1,
+  DIR_DOWN = 2,
+  DIR_LEFT = 3,
+  DIR_DELTA = [ '0,-1', '1,0', '0,1', '-1,0' ];
 
 function NotFound(msg){
-    this.name = 'NotFound';
-    Error.call(this, msg);
-    Error.captureStackTrace(this, arguments.callee);
+  this.name = 'NotFound';
+  Error.call(this, msg);
+  Error.captureStackTrace(this, arguments.callee);
 }
 
 NotFound.prototype.__proto__ = Error.prototype;
@@ -20,17 +20,17 @@ var bots = [],
   interval,
   express = require('express'),
   app = express.createServer(
-      // express.logger(),
-      // ress.bodyParser()
+    // express.logger(),
+    // ress.bodyParser()
   ),
   io = require('socket.io').listen(app);
 
 function authCallback(error, authorized) {
-    if (!authorized) {
-        console.error('WS auth failed: ', error);
-    } else {
-        console.log('WS auth OK');
-    }
+  if (!authorized) {
+    console.error('WS auth failed: ', error);
+  } else {
+    console.log('WS auth OK');
+  }
 }
 
 function putBot(id, socket) {
@@ -157,19 +157,19 @@ app.configure('production', function(){
 });
 
 app.get('/', function(req, res){
-    res.render('index', { layout: false, pageTitle: 'Tanks will be here soon. We promise.', youAreUsingJade: true, app_id: '' });
+  res.render('index', { layout: false, pageTitle: 'Tanks will be here soon. We promise.', youAreUsingJade: true, app_id: '' });
 });
 
 app.get(/^\/node_modules.*/, function(req, res){
-    throw new Error('Access denied');
+  throw new Error('Access denied');
 });
 
 app.get('/404', function(req, res){
-    throw new NotFound;
+  throw new NotFound;
 });
 
 app.get('/500', function(req, res){
-    throw new Error('keyboard cat!');
+  throw new Error('keyboard cat!');
 });
 
 // app.listen(8080);
