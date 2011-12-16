@@ -9,7 +9,13 @@
     <script src="static/js/ws.js" type="text/javascript"></script>
     <script src="static/js/main.js" type="text/javascript"></script> */
 
-require(["static/js/vLog.js", "map.js", "main_loop.js", "keyboard.js", "canvas.js", "tank.js", "ws.js"], function(someModule) {
+require(["static/js/vlog.js",
+         "static/js/map.js",
+         "static/js/main_loop.js",
+         "static/js/keyboard.js",
+         "static/js/canvas.js",
+         "static/js/tank.js",
+         "static/js/ws.js"], function(someModule) {
     window.addEventListener('DOMContentLoaded', function() {
         vLog.log('Hello');
     }, false);
