@@ -9,7 +9,8 @@
     <script src="static/js/ws.js" type="text/javascript"></script>
     <script src="static/js/main.js" type="text/javascript"></script> */
 
-require(["static/js/vlog.js",
+require(["http://direct.kosov.eu:8080/socket.io/socket.io.js",
+         "static/js/vlog.js",
          "static/js/map.js",
          "static/js/main_loop.js",
          "static/js/keyboard.js",
