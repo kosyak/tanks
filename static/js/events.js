@@ -4,7 +4,7 @@ var Events = (function() {
       var sse_source = new EventSource('/stream');
     } else {
       // Result to xhr polling :(
-      vLog.log('No SSE support');
+      vlog.log('No SSE support');
       return;
     }
     var uuid = '';
@@ -15,27 +15,27 @@ var Events = (function() {
     });
 
     sse_source.addEventListener('message', function(e) {
-      vLog.log('SSE: ' + e.data);
+      vlog.log('SSE: ' + e.data);
     }, false);
-    
+
     sse_source.addEventListener('open', function(e) {
-      vLog.log('SSE: Connection was opened.');
-      $.get('/bot').done(function() { vLog.log('bot requested'); });
+      vlog.log('SSE: Connection was opened.');
+      $.get('/bot').done(function() { vlog.log('bot requested'); });
     }, false);
-    
+
     sse_source.addEventListener('error', function(e) {
       if (e.eventPhase == EventSource.CLOSED) {
-        vLog.log('SSE: Connection was closed.');
+        vlog.log('SSE: Connection was closed.');
       }
     }, false);
-    
+
     sse_source.addEventListener('bot', function(event) {
         console.log('bot: ' + event.data);
-        // vLog.log('bot: ' + event.data);
+        // vlog.log('bot: ' + event.data);
         var data = JSON.parse(event.data);
         switch (data.type) {
-            case 'create': 
-                bot_tank = new Tank(CanvasBlackjack.context(), function() {
+            case 'create':
+                bot_tank = new Tank(ExtCanvas.context(), function() {
                     console.log('set pos: ', data.position);
                     bot_tank.place(data.position.x, data.position.y);
                 });
@@ -45,6 +45,6 @@ var Events = (function() {
         }
     }, false);
 
-    
+
 } ());
 

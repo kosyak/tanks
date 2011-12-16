@@ -1,4 +1,5 @@
-var Map = (function() {
+define(['./vlog', './Tank', './ExtCanvas'], function(vlog, Tank, ExtCanvas) {
+  return (function() {
     var staticDir = document.location.port ? '/' : 'static/'; // Node or Lighty?
     var image = new Image(),
         tile_map = [],
@@ -12,7 +13,7 @@ var Map = (function() {
         image.tileWidth = Math.floor(image.naturalWidth / cell_size);
         image.tileHeight = Math.floor(image.naturalHeight / cell_size);
         is_loaded = true;
-        vLog.log('tiles loaded');
+        vlog.log('tiles loaded');
         tile_map =  [[29,1,1,1,1,1,1,1,1,30],
                     [29,1,1,1,1,1,1,1,1,30],
                     [29,1,1,1,1,1,1,1,1,30],
@@ -44,7 +45,7 @@ var Map = (function() {
                     n_tile = tile_map[y][x] - 1;
                     /* context.fillStyle = (x % 2 + y % 2) % 2 ? '#000000' : '#ffffff';
                     context.fillRect(x * cell_size, y * cell_size, cell_size, cell_size); */
-                    CanvasBlackjack.context().drawImage(image,
+                    ExtCanvas.context().drawImage(image,
                                       (n_tile % image.tileWidth) * cell_size,
                                       Math.floor(n_tile / image.tileWidth) * cell_size,
                                       cell_size,
@@ -62,7 +63,7 @@ var Map = (function() {
                 n_tile = tile_map[y][x] - 1;
                 /* context.fillStyle = (x % 2 + y % 2) % 2 ? '#000000' : '#ffffff';
                 context.fillRect(x * cell_size, y * cell_size, cell_size, cell_size); */
-                CanvasBlackjack.context().drawImage(image,
+                ExtCanvas.context().drawImage(image,
                                   (n_tile % image.tileWidth) * cell_size,
                                   Math.floor(n_tile / image.tileWidth) * cell_size,
                                   cell_size,
@@ -109,4 +110,5 @@ var Map = (function() {
         data: data,
         collide: collide
     };
-} ());
+  } ());
+});
