@@ -27,11 +27,12 @@ function TanksData() {
  **/
 
 function Tank(context, keys, callback) {
+    var staticDir = document.location.port ? '/' : 'static/'; // Node or Lighty?
     globalTankCache.push(this);
 
     this.key = (keys && typeof keys !== 'function') ? keys : false;
     console.log(this.key);
-    this.imgURI = '/img/tank.png'; // URI! Yo!
+    this.imgURI = staticDir + 'img/tank.png'; // URI! Yo!
     this.img = new Image();
     this.img.src = this.imgURI;
     // TODO: fuck this shit!

@@ -1,11 +1,12 @@
 var Map = (function() {
+    var staticDir = document.location.port ? '/' : 'static/'; // Node or Lighty?
     var image = new Image(),
         tile_map = [],
         cell_size = 60,
         is_loaded = false;
 
     image.addEventListener('load', sheetLoaded, false);
-    image.src = 'img/sheet.png';
+    image.src = staticDir + 'img/sheet.png';
 
     function sheetLoaded() {
         image.tileWidth = Math.floor(image.naturalWidth / cell_size);
