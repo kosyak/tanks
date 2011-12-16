@@ -1,6 +1,6 @@
 //        <script src="http://direct.kosov.ur/socket.io/socket.io.js" type="text/javascript"></script>
 
-var WS = function() {
+var WS = (function() {
     var bot_tank,
         client_tanks = {},
         uuid = '',
@@ -92,4 +92,4 @@ var WS = function() {
         report: report,
         receive: receive
     };
-};
+} ());
