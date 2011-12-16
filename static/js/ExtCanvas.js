@@ -1,4 +1,4 @@
-
+// TODO: merge with Map
 define(['./vlog', './MainLoop', './Map'], function(vlog, MainLoop, Map) {
   return (function(id) {
     var canvas,
@@ -19,9 +19,9 @@ define(['./vlog', './MainLoop', './Map'], function(vlog, MainLoop, Map) {
 
     function renderField(rect) {
       if (!rect) {
-        Map.render({ tiles: toClear });
+        Map.render({ tiles: toClear }, context.drawImage);
       } else {
-        Map.render(rect);
+        Map.render(rect, context.drawImage);
       }
     };
 

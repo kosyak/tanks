@@ -1,4 +1,4 @@
-define(['./vlog', './Tank', './ExtCanvas'], function(vlog, Tank, ExtCanvas) {
+define(['./vlog', './Tank'], function(vlog, Tank) {
   return (function() {
     var staticDir = document.location.port ? '/' : 'static/'; // Node or Lighty?
     var image = new Image(),
@@ -26,7 +26,7 @@ define(['./vlog', './Tank', './ExtCanvas'], function(vlog, Tank, ExtCanvas) {
                     [29,1,1,1,1,1,1,1,1,30]];
     };
 
-    function render(rect) {
+    function render(rect, drawFunc) {
         if (!is_loaded) {
             return;
         }
@@ -45,15 +45,15 @@ define(['./vlog', './Tank', './ExtCanvas'], function(vlog, Tank, ExtCanvas) {
                     n_tile = tile_map[y][x] - 1;
                     /* context.fillStyle = (x % 2 + y % 2) % 2 ? '#000000' : '#ffffff';
                     context.fillRect(x * cell_size, y * cell_size, cell_size, cell_size); */
-                    ExtCanvas.context().drawImage(image,
-                                      (n_tile % image.tileWidth) * cell_size,
-                                      Math.floor(n_tile / image.tileWidth) * cell_size,
-                                      cell_size,
-                                      cell_size,
-                                      x * cell_size,
-                                      y * cell_size,
-                                      cell_size,
-                                      cell_size);
+                    drawFunc(image,
+                      (n_tile % image.tileWidth) * cell_size,
+                      Math.floor(n_tile / image.tileWidth) * cell_size,
+                      cell_size,
+                      cell_size,
+                      x * cell_size,
+                      y * cell_size,
+                      cell_size,
+                      cell_size);
                 }
             }
         } else if(rect && rect.tiles && rect.tiles.length) {
@@ -63,15 +63,15 @@ define(['./vlog', './Tank', './ExtCanvas'], function(vlog, Tank, ExtCanvas) {
                 n_tile = tile_map[y][x] - 1;
                 /* context.fillStyle = (x % 2 + y % 2) % 2 ? '#000000' : '#ffffff';
                 context.fillRect(x * cell_size, y * cell_size, cell_size, cell_size); */
-                ExtCanvas.context().drawImage(image,
-                                  (n_tile % image.tileWidth) * cell_size,
-                                  Math.floor(n_tile / image.tileWidth) * cell_size,
-                                  cell_size,
-                                  cell_size,
-                                  x * cell_size,
-                                  y * cell_size,
-                                  cell_size,
-                                  cell_size);
+                drawFunc(image,
+                  (n_tile % image.tileWidth) * cell_size,
+                  Math.floor(n_tile / image.tileWidth) * cell_size,
+                  cell_size,
+                  cell_size,
+                  x * cell_size,
+                  y * cell_size,
+                  cell_size,
+                  cell_size);
             });
             toClear = [];
         }
