@@ -1,4 +1,13 @@
-var WS = (function() {
+//        <script src="http://direct.kosov.ur/socket.io/socket.io.js" type="text/javascript"></script>
+
+var asyncIOScript = document.createElement('script');
+asyncIOScript.language = 'JavaScript';
+asyncIOScript.src = 'http://direct.kosov.eu:8080/socket.io/socket.io.js';
+asyncIOScript.onload = function() {
+    WS = WS();
+}
+
+var WS = function() {
     var bot_tank,
         client_tanks = {},
         uuid = '',
@@ -90,4 +99,4 @@ var WS = (function() {
         report: report,
         receive: receive
     };
-} ());
+};
