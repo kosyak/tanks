@@ -7,11 +7,9 @@ define(['./vlog', './Tank'], function(vlog, Tank) {
   var image = new Image(),
     tile_map = [],
     cell_size = 60,
-    is_loaded = false,
-    MainLoop;
+    is_loaded = false;
 
-  function init(mainLoop, callback) {
-    MainLoop = mainLoop;
+  function init(callback) {
     image.addEventListener('load', function() {
       sheetLoaded();
 
@@ -22,7 +20,7 @@ define(['./vlog', './Tank'], function(vlog, Tank) {
       }
       context = canvas.getContext('2d');
       renderField({ x: 0, y: 0, width: 10, height: 10 });
-      MainLoop.pushClear(this.renderField);
+      require('./MainLoop').pushClear(this.renderField);
 
       if (typeof callback === 'function') {
         callback();

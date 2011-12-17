@@ -1,10 +1,8 @@
-define(['./vlog'], function(vlog) {
+define(['./vlog', './MainLoop'], function(vlog, MainLoop) {
   var callbacks = { 'sample': [ function() { console.log('test1') }, function() { console.log('test2') } ] },
-    state = { 'keycode1': true, 'keycode2': false },
-    MainLoop;
+    state = { 'keycode1': true, 'keycode2': false };
 
-  function start(mainLoop) {
-    MainLoop = mainLoop;
+  function start() {
     document.onkeydown = function(event) {
       // vlog.log('keyboard down: ' + event.which);
       state[event.which] = true;
@@ -13,7 +11,7 @@ define(['./vlog'], function(vlog) {
       // vlog.log('keyboard up: ' + event.which);
       state[event.which] = false;
     };
-    MainLoop.pushClear(call);
+    require('./MainLoop').pushClear(call);
   }
 
   function assign(keycode, callback) {
