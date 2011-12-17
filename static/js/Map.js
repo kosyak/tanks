@@ -166,7 +166,7 @@ define(['./vlog', './Tank', './MainLoop'], function(vlog, Tank, MainLoop) {
       // load: load,
       render: render,
       data: data,
-      collide: collide
+      collide: collide,
       // from Map
       init: init,
       renderField: renderField,
