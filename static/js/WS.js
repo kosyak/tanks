@@ -41,6 +41,9 @@ define(['./vlog', './Tank', './Map', 'http://direct.kosov.eu:8080/socket.io/sock
 
     // TODO: не совсем receive: функция ставит объекты по местам так, как сказал сервер
     function receive() {
+      if (!(Map && Map.context)) {
+        return false;
+      }
       // console.log(events, events.length);
       while (events.length) {
         var data = events[0];
@@ -76,6 +79,9 @@ define(['./vlog', './Tank', './Map', 'http://direct.kosov.eu:8080/socket.io/sock
     }
 
     function report() {
+      if (!(Map && Map.data)) {
+        return false;
+      }
       socket.emit('report', {
         uuid: uuid,
         time: Date.now(),

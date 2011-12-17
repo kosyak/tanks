@@ -1,27 +1,40 @@
 define(['./vlog', './Tank', './MainLoop'], function(vlog, Tank, MainLoop) {
   return (function() {
-    // from Map
     var canvas,
       context,
       block_size = 60, // размер одного квадрата поля
       toClear = []; // номера клеток, которые будут очищены
+    var staticDir = document.location.port ? '/' : 'static/'; // Node or Lighty?
+    var image = new Image(),
+      tile_map = [],
+      cell_size = 60,
+      is_loaded = false;
 
-    function init() {
-      canvas = document.getElementById('canvasOne');
-      if (!canvas || !canvas.getContext) {
-        vlog.log('Canvas element not found');
-        return false;
-      }
-      context = canvas.getContext('2d');
-      this.renderField({ x: 0, y: 0, width: 10, height: 10 });
-      MainLoop.pushClear(this.renderField);
+    function init(callback) {
+      image.addEventListener('load', function() {
+        sheetLoaded();
+
+        canvas = document.getElementById('canvasOne');
+        if (!canvas || !canvas.getContext) {
+          vlog.log('Canvas element not found');
+          return false;
+        }
+        context = canvas.getContext('2d');
+        renderField({ x: 0, y: 0, width: 10, height: 10 });
+        MainLoop.pushClear(this.renderField);
+
+        if (typeof callback === 'function') {
+          callback();
+        }
+      }, false);
+      image.src = staticDir + 'img/sheet.png';
     };
 
     function renderField(rect) {
       if (!rect) {
-        this.render({ tiles: toClear }, context.drawImage);
+        render({ tiles: toClear });
       } else {
-        this.render(rect, context.drawImage);
+        render(rect);
       }
     };
 
@@ -56,16 +69,6 @@ define(['./vlog', './Tank', './MainLoop'], function(vlog, Tank, MainLoop) {
       });
     };
     */
-    // /from Map
-
-    var staticDir = document.location.port ? '/' : 'static/'; // Node or Lighty?
-    var image = new Image(),
-      tile_map = [],
-      cell_size = 60,
-      is_loaded = false;
-
-    image.addEventListener('load', sheetLoaded, false);
-    image.src = staticDir + 'img/sheet.png';
 
     function sheetLoaded() {
       image.tileWidth = Math.floor(image.naturalWidth / cell_size);
@@ -84,7 +87,7 @@ define(['./vlog', './Tank', './MainLoop'], function(vlog, Tank, MainLoop) {
                   [29,1,1,1,1,1,1,1,1,30]];
     };
 
-    function render(rect, drawFunc) {
+    function render(rect) {
       if (!is_loaded) {
         return;
       }
@@ -103,7 +106,7 @@ define(['./vlog', './Tank', './MainLoop'], function(vlog, Tank, MainLoop) {
             n_tile = tile_map[y][x] - 1;
             /* context.fillStyle = (x % 2 + y % 2) % 2 ? '#000000' : '#ffffff';
             context.fillRect(x * cell_size, y * cell_size, cell_size, cell_size); */
-            drawFunc(image,
+            context.drawImage(image,
               (n_tile % image.tileWidth) * cell_size,
               Math.floor(n_tile / image.tileWidth) * cell_size,
               cell_size,
@@ -121,7 +124,7 @@ define(['./vlog', './Tank', './MainLoop'], function(vlog, Tank, MainLoop) {
           n_tile = tile_map[y][x] - 1;
           /* context.fillStyle = (x % 2 + y % 2) % 2 ? '#000000' : '#ffffff';
           context.fillRect(x * cell_size, y * cell_size, cell_size, cell_size); */
-          drawFunc(image,
+          context.drawImage(image,
             (n_tile % image.tileWidth) * cell_size,
             Math.floor(n_tile / image.tileWidth) * cell_size,
             cell_size,

@@ -7,15 +7,15 @@ require(['./MainLoop', './vlog', './Tank', './Map'], function(MainLoop, vlog, Ta
 
   window.onload = function() {
     // initCanvas('canvasOne');
-    Map.init();
-/*    Map.renderField(); */
-    window.onresize = Map.center;
-    Map.center();
+    Map.init(function() {
+      window.onresize = Map.center;
+      Map.center();
 
-    var tank = new Tank(Map.context(), { left: 37, top: 38, right: 40, down: 39 }, function() {
-      tank.place(70, 70);
-      // MainLoop.push(function() { vlog.log('x: ' + tank.pos.x + '; y: ' + tank.pos.y); });
-      MainLoop.start();
+      var tank = new Tank(Map.context(), { left: 37, top: 38, right: 40, down: 39 }, function() {
+        tank.place(70, 70);
+        // MainLoop.push(function() { vlog.log('x: ' + tank.pos.x + '; y: ' + tank.pos.y); });
+        MainLoop.start();
+      });
     });
   }
 
