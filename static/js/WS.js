@@ -4,7 +4,8 @@ define(['./vlog', './Tank', './Map', 'http://direct.kosov.eu:8080/socket.io/sock
     uuid = '',
     socket,
     events = [],
-    started = false;
+    started = false,
+    Tank = require('./Tank');
 
   function start() {
     socket = io.connect('http://' + location.host + ':8080'),

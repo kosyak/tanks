@@ -1,6 +1,6 @@
 // TODO: replace following with window.addEventListener('load', eventWindowLoaded, false);
 
-require(['./MainLoop', './vlog', './Tank', './Map', './WS'], function(MainLoop, vlog, Tank, Map, WS) {
+require(['./MainLoop', './vlog', './Tank', './Map', './WS', './Keyboard'], function(MainLoop, vlog, Tank, Map, WS, Keyboard) {
   window.addEventListener('DOMContentLoaded', function() {
     vlog.log('Hello');
   }, false);
