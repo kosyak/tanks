@@ -7,8 +7,8 @@ require(['./MainLoop', './vlog', './Tank', './Map', './WS', './Keyboard'], funct
 
   window.onload = function() {
     // initCanvas('canvasOne');
-    MainLoop.start();
     Map.init(function() {
+      MainLoop.start();
       window.onresize = Map.center;
       Map.center();
       WS.start();
