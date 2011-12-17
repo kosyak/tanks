@@ -2,45 +2,40 @@ define(['./vlog', './Tank', './Map', 'http://direct.kosov.eu:8080/socket.io/sock
   var bot_tank,
     client_tanks = {},
     uuid = '',
+    socket,
+    events = [],
+    started = false;
+
+  function start() {
     socket = io.connect('http://' + location.host + ':8080'),
-    events = [];
 
-  socket.on('uuid', function (data) {
-    uuid = data.uuid;
-    console.log('uuid: ', data.uuid);
-  });
+    socket.on('uuid', function (data) {
+      uuid = data.uuid;
+      console.log('uuid: ', data.uuid);
+    });
 
-  socket.on('message', function(data) {
-    vlog.log('WS: ', data);
-  });
+    socket.on('message', function(data) {
+      vlog.log('WS: ', data);
+    });
 
-  /* sse_source.addEventListener('open', function(e) {
-    vlog.log('SSE: Connection was opened.');
-    $.get('/bot').done(function() { vlog.log('bot requested'); });
-  }, false);
+    socket.on('bot', function(data) {
+      events.push(data);
+    });
 
-  sse_source.addEventListener('error', function(e) {
-    if (e.eventPhase == EventSource.CLOSED) {
-      vlog.log('SSE: Connection was closed.');
-    }
-  }, false); */
+    socket.on('clients', function(data) {
+      events.push({ type: 'clients', clients: data.clients });
+    });
 
-  socket.on('bot', function(data) {
-    // vlog.log('bot: ' + data);
-    events.push(data);
-  });
+    socket.on('remove', function(data) {
+      events.push({ type: 'remove', id: data.id });
+    });
 
-  socket.on('clients', function(data) {
-    events.push({ type: 'clients', clients: data.clients });
-  });
-
-  socket.on('remove', function(data) {
-    events.push({ type: 'remove', id: data.id });
-  });
+    started = true;
+  }
 
   // TODO: не совсем receive: функция ставит объекты по местам так, как сказал сервер
   function receive() {
-    if (!(Map && Map.context)) {
+    if (!(started && Map && Map.context)) {
       return false;
     }
     // console.log(events, events.length);
@@ -78,7 +73,7 @@ define(['./vlog', './Tank', './Map', 'http://direct.kosov.eu:8080/socket.io/sock
   }
 
   function report() {
-    if (!(Map && Map.data)) {
+    if (!(started && Map && Map.data)) {
       return false;
     }
     socket.emit('report', {
@@ -93,6 +88,7 @@ define(['./vlog', './Tank', './Map', 'http://direct.kosov.eu:8080/socket.io/sock
   MainLoop.push(function() { self.report(); }); */
 
   return {
+    startL start,
     report: report,
     receive: receive
   };

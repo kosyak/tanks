@@ -2,15 +2,17 @@ define(['./vlog', './MainLoop'], function(vlog, MainLoop) {
   var callbacks = { 'sample': [ function() { console.log('test1') }, function() { console.log('test2') } ] },
     state = { 'keycode1': true, 'keycode2': false };
 
-  document.onkeydown = function(event) {
-    // vlog.log('keyboard down: ' + event.which);
-    state[event.which] = true;
-  };
-  document.onkeyup = function(event) {
-    // vlog.log('keyboard up: ' + event.which);
-    state[event.which] = false;
-  };
-  MainLoop.pushClear(call);
+  function start() {
+    document.onkeydown = function(event) {
+      // vlog.log('keyboard down: ' + event.which);
+      state[event.which] = true;
+    };
+    document.onkeyup = function(event) {
+      // vlog.log('keyboard up: ' + event.which);
+      state[event.which] = false;
+    };
+    MainLoop.pushClear(call);
+  }
 
   function assign(keycode, callback) {
     vlog.log('keyboard event assign: ' + keycode);
@@ -44,6 +46,7 @@ define(['./vlog', './MainLoop'], function(vlog, MainLoop) {
   };
 
   return {
+    start: start,
     assign: assign,
     free: free,
     forceDown: force_down,
