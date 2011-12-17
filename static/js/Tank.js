@@ -1,11 +1,13 @@
-define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard, MainLoop, Map) {
+define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard) {
   var globalTankCache = [];
 
   var DIR_UP = 0,
     DIR_RIGHT = 1,
     DIR_DOWN = 2,
     DIR_LEFT = 3,
-    DIR_DELTA = [ '0,-1', '1,0', '0,1', '-1,0' ];
+    DIR_DELTA = [ '0,-1', '1,0', '0,1', '-1,0' ],
+    MainLoop = require('./MainLoop'),
+    Map = require('./Map');
 
   function TanksData() {
     var data = [];
