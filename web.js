@@ -116,11 +116,13 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('report', function (data) {
     // console.log('report data', data);
-    clients[uuid] = { // === data.uuid ??
-      // с клиента приходят данные ровно об одном танке
-      x: data.tanks[0].x,
-      y: data.tanks[0].y,
-      direction: data.tanks[0].direction
+    if (data.tanks && data.tanks.length) {
+      clients[uuid] = { // === data.uuid ??
+        // с клиента приходят данные ровно об одном танке
+        x: data.tanks[0].x,
+        y: data.tanks[0].y,
+        direction: data.tanks[0].direction
+      }
     }
   });
   socket.on('disconnect', function() {
