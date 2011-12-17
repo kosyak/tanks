@@ -5,9 +5,7 @@ define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard,
     DIR_RIGHT = 1,
     DIR_DOWN = 2,
     DIR_LEFT = 3,
-    DIR_DELTA = [ '0,-1', '1,0', '0,1', '-1,0' ],
-    MainLoop = require('./MainLoop'),
-    Map = require('./Map');
+    DIR_DELTA = [ '0,-1', '1,0', '0,1', '-1,0' ];
 
   function TanksData() {
     var data = [];
@@ -28,6 +26,7 @@ define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard,
    **/
 
   function Tank(context, keys, callback) {
+    MainLoop = MainLoop || require('MainLoop');
     var staticDir = document.location.port ? '/' : 'static/'; // Node or Lighty?
     globalTankCache.push(this);
 

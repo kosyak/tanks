@@ -4,10 +4,10 @@ define(['./vlog', './Tank', './Map', 'http://direct.kosov.eu:8080/socket.io/sock
     uuid = '',
     socket,
     events = [],
-    started = false,
-    Tank = require('./Tank');
+    started = false;
 
   function start() {
+    Tank = Tank || require('./Tank');
     socket = io.connect('http://' + location.host + ':8080'),
 
     socket.on('uuid', function (data) {
