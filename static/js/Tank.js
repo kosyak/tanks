@@ -1,4 +1,4 @@
-define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard) {
+define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard, MainLoop, Map) {
   var globalTankCache = [];
 
   var DIR_UP = 0,
