@@ -88,7 +88,7 @@ define(['./vlog', './Tank', './Map', 'http://direct.kosov.eu:8080/socket.io/sock
   MainLoop.push(function() { self.report(); }); */
 
   return {
-    startL start,
+    start: start,
     report: report,
     receive: receive
   };
