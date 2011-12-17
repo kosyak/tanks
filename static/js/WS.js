@@ -82,7 +82,7 @@ define(['./vlog', './Tank', './Map', 'http://direct.kosov.eu:8080/socket.io/sock
       uuid: uuid,
       time: Date.now(),
       map: Map.data(),
-      tanks: require('Tank').TanksData()
+      // tanks: require('Tank').TanksData()
     });
   };
 
