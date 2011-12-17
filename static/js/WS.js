@@ -7,7 +7,7 @@ define(['./vlog', './Tank', './Map', 'http://direct.kosov.eu:8080/socket.io/sock
     started = false;
 
   function start() {
-    Tank = Tank || require('./Tank');
+    Tank = Tank || require('Tank');
     socket = io.connect('http://' + location.host + ':8080'),
 
     socket.on('uuid', function (data) {
@@ -36,7 +36,7 @@ define(['./vlog', './Tank', './Map', 'http://direct.kosov.eu:8080/socket.io/sock
 
   // TODO: не совсем receive: функция ставит объекты по местам так, как сказал сервер
   function receive() {
-    Tank = Tank || require('./Tank');
+    Tank = Tank || require('Tank');
     if (!(started && Map && Map.context)) {
       return false;
     }
@@ -82,7 +82,7 @@ define(['./vlog', './Tank', './Map', 'http://direct.kosov.eu:8080/socket.io/sock
       uuid: uuid,
       time: Date.now(),
       map: Map.data(),
-      // tanks: require('Tank').TanksData()
+      tanks: require('Tank').prototype.TanksData()
     });
   };
 
