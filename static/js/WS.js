@@ -47,12 +47,12 @@ define(['./vlog', './Tank', './Map', 'http://direct.kosov.eu:8080/socket.io/sock
         /*var data = */events.splice(0, 1);
         switch (data.type) {
           case 'create':
-            bot_tank = new Tank(ExtCanvas.context(), function() {
+            bot_tank = new Tank(Map.context(), function() {
               bot_tank.place(data.position.x, data.position.y, data.direction);
             });
           break;
           case 'place': {
-            bot_tank = bot_tank || new Tank(ExtCanvas.context());
+            bot_tank = bot_tank || new Tank(Map.context());
             bot_tank.place(data.position.x, data.position.y, true, data.direction);
           }
           break;
@@ -60,7 +60,7 @@ define(['./vlog', './Tank', './Map', 'http://direct.kosov.eu:8080/socket.io/sock
             for (var id in data.clients) {
               if (id !== uuid) {
                 // if (typeof client_tanks[uuid] === 'undefined') { console.log('new tank: ', data.clients[uuid]); }
-                client_tanks[id] = client_tanks[id] || new Tank(ExtCanvas.context());
+                client_tanks[id] = client_tanks[id] || new Tank(Map.context());
                 client_tanks[id].place(data.clients[id].x, data.clients[id].y, true, data.clients[id].direction);
               }
             }

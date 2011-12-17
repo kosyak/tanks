@@ -35,7 +35,7 @@ var Events = (function() {
         var data = JSON.parse(event.data);
         switch (data.type) {
             case 'create':
-                bot_tank = new Tank(ExtCanvas.context(), function() {
+                bot_tank = new Tank(Map.context(), function() {
                     console.log('set pos: ', data.position);
                     bot_tank.place(data.position.x, data.position.y);
                 });

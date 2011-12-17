@@ -1,5 +1,5 @@
 
-define(['./vlog', './Keyboard', './MainLoop', './ExtCanvas'], function(vlog, Keyboard, MainLoop, ExtCanvas) {
+define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard, MainLoop, Map) {
   var globalTankCache = [];
 
   var DIR_UP = 0,
@@ -107,9 +107,9 @@ define(['./vlog', './Keyboard', './MainLoop', './ExtCanvas'], function(vlog, Key
     if (!isNaN(x) && !isNaN(y)) {
       this.pos = {x: x, y: y};
     }
-    ExtCanvas.clear({
-      x: Math.floor(this.pos.x / ExtCanvas.blockSize())-1,
-      y: Math.floor(this.pos.y / ExtCanvas.blockSize())-1,
+    Map.clear({
+      x: Math.floor(this.pos.x / Map.blockSize())-1,
+      y: Math.floor(this.pos.y / Map.blockSize())-1,
       width: 3,
       height: 3
     });
