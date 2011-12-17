@@ -7,11 +7,11 @@ require(['./MainLoop', './vlog', './Tank', './Map'], function(MainLoop, vlog, Ta
 
   window.onload = function() {
     // initCanvas('canvasOne');
+      MainLoop.start();
     Map.init(function() {
       window.onresize = Map.center;
       Map.center();
       WS.start();
-      MainLoop.start();
       Keyboard.start();
 
       var tank = new Tank(Map.context(), { left: 37, top: 38, right: 40, down: 39 }, function() {
