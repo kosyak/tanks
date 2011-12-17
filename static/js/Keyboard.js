@@ -1,4 +1,4 @@
-define(['./vlog'], function(vlog,) {
+define(['./vlog'], function(vlog) {
   var callbacks = { 'sample': [ function() { console.log('test1') }, function() { console.log('test2') } ] },
     state = { 'keycode1': true, 'keycode2': false },
     MainLoop;
