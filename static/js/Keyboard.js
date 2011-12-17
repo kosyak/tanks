@@ -4,6 +4,7 @@ define(['./vlog'], function(vlog) {
     MainLoop;
 
   function start(mainLoop) {
+    MainLoop = mainLoop;
     document.onkeydown = function(event) {
       // vlog.log('keyboard down: ' + event.which);
       state[event.which] = true;
@@ -12,7 +13,6 @@ define(['./vlog'], function(vlog) {
       // vlog.log('keyboard up: ' + event.which);
       state[event.which] = false;
     };
-    MainLoop = mainLoop;
     MainLoop.pushClear(call);
   }
 

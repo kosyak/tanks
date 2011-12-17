@@ -1,4 +1,4 @@
-define(['./vlog', './Tank', './MainLoop'], function(vlog, Tank, MainLoop) {
+define(['./vlog', './Tank'], function(vlog, Tank) {
   var canvas,
     context,
     block_size = 60, // размер одного квадрата поля
@@ -7,9 +7,11 @@ define(['./vlog', './Tank', './MainLoop'], function(vlog, Tank, MainLoop) {
   var image = new Image(),
     tile_map = [],
     cell_size = 60,
-    is_loaded = false;
+    is_loaded = false,
+    MainLoop;
 
-  function init(callback) {
+  function init(mainLoop, callback) {
+    MainLoop = mainLoop;
     image.addEventListener('load', function() {
       sheetLoaded();
 
