@@ -12,20 +12,10 @@ define(['./vlog', './Tank'], function(vlog, Tank) {
   function init(callback) {
     image.addEventListener('load', function() {
       sheetLoaded();
-
-      canvas = document.getElementById('canvasOne');
-      if (!canvas || !canvas.getContext) {
-        vlog.log('Canvas element not found');
-        return false;
-      }
-      context = canvas.getContext('2d');
-      renderField({ x: 0, y: 0, width: 10, height: 10 });
-      require('./MainLoop').pushClear(this.renderField);
-
       if (typeof callback === 'function') {
         callback();
       }
-    }, false);
+    } , false);
     image.src = staticDir + 'img/sheet.png';
   };
 
@@ -84,6 +74,15 @@ define(['./vlog', './Tank'], function(vlog, Tank) {
                 [29,1,1,1,1,1,1,1,1,30],
                 [29,1,1,1,1,1,1,1,1,30],
                 [29,1,1,1,1,1,1,1,1,30]];
+
+    canvas = document.getElementById('canvasOne');
+    if (!canvas || !canvas.getContext) {
+      vlog.log('Canvas element not found');
+      return false;
+    }
+    context = canvas.getContext('2d');
+    renderField({ x: 0, y: 0, width: 10, height: 10 });
+    require('./MainLoop').pushClear(this.renderField);
   };
 
   function render(rect) {
