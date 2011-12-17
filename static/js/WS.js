@@ -1,4 +1,4 @@
-define(['./vlog', './Tank', './Map', 'http://direct.kosov.eu:8080/socket.io/socket.io.js'], function(vlog, Tank, Map) {
+define(['./vlog', './Tank', './Map', 'http://' + location.host + ':8080/socket.io/socket.io.js'], function(vlog, Tank, Map) {
   var bot_tank,
     client_tanks = {},
     uuid = '',
