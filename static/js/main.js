@@ -12,7 +12,7 @@ require(['./MainLoop', './vlog', './Tank', './Map'], function(MainLoop, vlog, Ta
       window.onresize = Map.center;
       Map.center();
       WS.start();
-      Keyboard.start();
+      Keyboard.start(MainLoop);
 
       var tank = new Tank(Map.context(), { left: 37, top: 38, right: 40, down: 39 }, function() {
         tank.place(70, 70);
