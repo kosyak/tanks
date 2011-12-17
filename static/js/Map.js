@@ -82,7 +82,7 @@ define(['./vlog', './Tank'], function(vlog, Tank) {
     }
     context = canvas.getContext('2d');
     renderField({ x: 0, y: 0, width: 10, height: 10 });
-    require('./MainLoop').pushClear(this.renderField);
+    require('./MainLoop').pushClear(renderField);
   };
 
   function render(rect) {
