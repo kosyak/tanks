@@ -1,4 +1,3 @@
-
 define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard, MainLoop, Map) {
   var globalTankCache = [];
 
