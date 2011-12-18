@@ -1,7 +1,6 @@
 define(['./vlog', './Tank'], function(vlog, Tank) {
   var canvas,
     context,
-    block_size = 60, // размер одного квадрата поля
     toClear = []; // номера клеток, которые будут очищены
   var staticDir = document.location.port ? '/' : 'static/'; // Node or Lighty?
   var image = new Image(),
@@ -65,14 +64,14 @@ define(['./vlog', './Tank'], function(vlog, Tank) {
     is_loaded = true;
     vlog.log('tiles loaded');
     tile_map =  [[29,1,1,1,1,1,1,1,1,30],
-                [29,1,1,1,1,1,1,1,1,30],
-                [29,1,1,1,1,1,1,1,1,30],
-                [29,1,1,1,1,1,1,1,1,30],
+                [29,1,1,1,1,1,1,1,1,1],
+                [29,1,1,1,1,1,1,1,1,1],
+                [29,1,1,1,1,1,1,1,1,1],
                 [29,1,1,1,1,1,1,1,1,30],
                 [29,1,1,25,26,1,1,1,1,30],
                 [29,1,1,1,1,1,1,1,1,30],
-                [29,1,1,1,1,1,1,1,1,30],
-                [29,1,1,1,1,1,1,1,1,30],
+                [1,1,1,1,1,1,1,1,1,30],
+                [1,1,1,1,1,1,1,1,1,30],
                 [29,1,1,1,1,1,1,1,1,30]];
 
     canvas = document.getElementById('canvasOne');
@@ -139,15 +138,55 @@ define(['./vlog', './Tank'], function(vlog, Tank) {
   // Проверяет положение танка на наличие коллизий с элементами карты
   function collide(tank) {
     var cells = [
-      { x: Math.floor(tank.pos.x / cell_size), y: Math.floor(tank.pos.y / cell_size) },
-      { x: Math.floor((tank.pos.x + tank.width()) / cell_size), y: Math.floor(tank.pos.y / cell_size) },
-      { x: Math.floor(tank.pos.x / cell_size), y: Math.floor((tank.pos.y + tank.height()) / cell_size) },
-      { x: Math.floor((tank.pos.x + tank.width()) / cell_size), y: Math.floor((tank.pos.y + tank.height()) / cell_size) },
+      { x: Math.floor(tank.pos.x / cell_size), y: Math.floor(tank.pos.y / cell_size) }, // top left
+      { x: Math.floor((tank.pos.x + tank.width()) / cell_size), y: Math.floor(tank.pos.y / cell_size) }, // top right
+      { x: Math.floor(tank.pos.x / cell_size), y: Math.floor((tank.pos.y + tank.height()) / cell_size) }, // bottom left
+      { x: Math.floor((tank.pos.x + tank.width()) / cell_size), y: Math.floor((tank.pos.y + tank.height()) / cell_size) }, // bottom right
     ];
     for (var i = 0; i < cells.length; i += 1) {
-      if (cells[i].x < 0 || cells[i].x >= tile_map[0].length ||
-          cells[i].y < 0 || cells[i].y >= tile_map.length ||
-          !isRoad(tile_map[cells[i].y][cells[i].x])) {
+      if (cells[i].x < 0) {
+        tank.pos.x = 0;
+        return true;
+      } else if (cells[i].x >= tile_map[0].length) {
+        tank.pos.x = cell_size * tile_map[0].length - tank.width();
+        return true;
+      } else if (cells[i].y < 0) {
+        tank.pos.y = 0;
+        return true;
+      } else if (cells[i].y >= tile_map.length) {
+        tank.pos.y = cell_size * tile_map.length - tank.height();
+        return true;
+      } else if (!isRoad(tile_map[cells[i].y][cells[i].x])) {
+        switch (i) {
+          case 0:
+            if (tank.width() > tank.height()) { // horizontal position - move to the right from cell
+              tank.pos.x = cells[i].x * cell_size + cell_size;
+            } else { // vertical
+              tank.pos.y = cells[i].y * cell_size + cell_size; // to the down from cell
+            }
+          break;
+          case 1:
+            if (tank.width() > tank.height()) { // horizontal
+              tank.pos.x = cells[i].x * cell_size - tank.width(); // to the left
+            } else { // vertical
+              tank.pos.y = cells[i].y * cell_size + cell_size; // to the down
+            }
+          break;
+          case 2:
+            if (tank.width() > tank.height()) { // horizontal
+              tank.pos.x = cells[i].x * cell_size + cell_size; // to the right
+            } else { // vertical
+              tank.pos.y = cells[i].y * cell_size - tank.height(); // to the up
+            }
+          break;
+          case 3:
+            if (tank.width() > tank.height()) { // horizontal
+              tank.pos.x = cells[i].x * cell_size - tank.width(); // to the left
+            } else { // vertical
+              tank.pos.y = cells[i].y * cell_size - tank.height(); // to the up
+            }
+          break;
+        }
         return true;
       }
     }
@@ -173,7 +212,7 @@ define(['./vlog', './Tank'], function(vlog, Tank) {
     renderField: renderField,
     width: function() { return canvas.clientWidth; },
     height: function() { return canvas.clientHeight; },
-    blockSize: function() { return block_size; },
+    blockSize: function() { return cell_size; },
     center: center,
     context: function() { return context; }, // TODO: this is very bad! makes object too open
     clear: clear

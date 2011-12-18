@@ -7,6 +7,10 @@ define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard,
     DIR_LEFT = 3,
     DIR_DELTA = [ '0,-1', '1,0', '0,1', '-1,0' ];
 
+  var staticDir = document.location.port ? '/' : 'static/'; // Node or Lighty?
+  var src_image = new Image();
+  src_image.src = staticDir + 'img/sheet.png';
+
   function TanksData() {
     var data = [];
     for (var i = 0; i < globalTankCache.length; i += 1) {
@@ -16,6 +20,95 @@ define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard,
     }
     return data;
   }
+
+  function Bullet(tank) {
+    MainLoop = MainLoop || require('MainLoop');
+
+    this.speed = 0.08; // pixels per millisecond
+    this.tank = tank;
+    this.size = 14;
+    this.pos = {
+      x: tank.pos.x,
+      y: tank.pos.y
+    };
+    switch (tank.direction) {
+      case DIR_LEFT:
+        this.pos.x += 0.5 * (Map.blockSize() - tank.width()) - 0.5 * this.width();
+        this.pos.y += 0.5 * (tank.height() - this.height());
+      break;
+      case DIR_RIGHT:
+        this.pos.x += Map.blockSize() - 0.5 * (Map.blockSize() - tank.width()) - 0.5 * this.width();
+        this.pos.y += 0.5 * (tank.height() - this.height());
+      break;
+      case DIR_UP:
+        this.pos.x += 0.5 * (tank.width() - this.width());
+        this.pos.y += 0.5 * (Map.blockSize() - tank.height()) - 0.5 * this.height();
+      break;
+      case DIR_DOWN:
+        this.pos.x += 0.5 * (tank.width() - this.width());
+        this.pos.y += Map.blockSize() - 0.5 * (Map.blockSize() - tank.height()) - 0.5 * this.height();
+      break;
+    }
+
+    this.startTime = Date.now();
+    this.direction = tank.direction;
+    var delta = DIR_DELTA[this.direction].split(',');
+    this.delta = {
+      x: delta[0] * this.speed * MainLoop.fps(),
+      y: delta[1] * this.speed * MainLoop.fps()
+    };
+
+    /* src_image.addEventListener('load', function() {
+
+    }, false); */
+    var self = this;
+    this.queryIndex = MainLoop.push(function() { self.placeMove(); });
+
+  }
+
+  Bullet.prototype.width = function(direction) {
+    return this.size;
+  }
+
+  Bullet.prototype.height = function(direction) {
+    return this.size;
+  }
+
+  Bullet.prototype.placeMove = function(no_render) {
+
+    if (!no_render && Map.collide(this)) {
+      this.remove();
+    }
+
+    Map.clear({
+      x: Math.floor(this.pos.x / Map.blockSize())-1,
+      y: Math.floor(this.pos.y / Map.blockSize())-1,
+      width: 3,
+      height: 3
+    });
+
+    if (!no_render) {
+      this.tank.context.drawImage(src_image,
+        5 * Map.blockSize() + 23,
+        2 * Map.blockSize() + 23,
+        this.size,
+        this.size,
+        this.pos.x,
+        this.pos.y,
+        this.size,
+        this.size);
+    }
+    this.pos.x += this.delta.x;
+    this.pos.y += this.delta.y;
+  }
+
+  Bullet.prototype.remove = function() {
+    this.placeMove(true);
+    MainLoop.remove(this.queryIndex);
+    delete this.tank.bullet;
+  }
+
+
 
   /**
    * Объект танка
@@ -27,7 +120,6 @@ define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard,
 
   function Tank(context, keys, callback) {
     MainLoop = MainLoop || require('MainLoop');
-    var staticDir = document.location.port ? '/' : 'static/'; // Node or Lighty?
     globalTankCache.push(this);
 
     this.key = (keys && typeof keys !== 'function') ? keys : false;
@@ -35,6 +127,7 @@ define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard,
     this.imgURI = staticDir + 'img/tank.png'; // URI! Yo!
     this.img = new Image();
     this.img.src = this.imgURI;
+    this.bullet = null;
     // TODO: fuck this shit!
     this.rotate_delta = 5;// (this.img.naturalWidth && this.img.naturalHeight) ? 0.5 * Math.abs(self.img.naturalWidth - self.img.naturalHeight) : 0;
     this.direction = DIR_UP;
@@ -69,9 +162,16 @@ define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard,
     var self = this;
     if (this.key) {
       for (var c in this.key) {
-        Keyboard.assign(this.key[c], function(keycode) {
-          self.move(keycode);
-        });
+        if (c !== 'shoot') {
+          Keyboard.assign(this.key[c], function(keycode) {
+            self.move(keycode);
+          });
+        } else {
+          Keyboard.assign(this.key[c], function(keycode) {
+            self.bullet = self.bullet || new Bullet(self);
+          });
+
+        }
       }
     }
     this.queryIndex = MainLoop.push(function() { self.place(); });
@@ -133,6 +233,8 @@ define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard,
         }
       }
 
+      Map.collide(this); // метод сам правит координаты
+
       var direction = this.rotation ? this.rotation.direction : this.direction;
 
       // Не понимаю, почему нужно это смещение. Пока считаем за HACK
@@ -176,7 +278,8 @@ define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard,
         this.rotation = null;
         this.pos.x += delta.x * this.speed * MainLoop.fps();
         this.pos.y += delta.y * this.speed * MainLoop.fps();
-        if (Map.collide(this) || this.collide()) {
+        Map.collide(this); // метод сам правит координаты
+        if (this.collide()) {
           this.pos.x -= delta.x * this.speed * MainLoop.fps();
           this.pos.y -= delta.y * this.speed * MainLoop.fps();
         }

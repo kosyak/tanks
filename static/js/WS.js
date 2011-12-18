@@ -1,4 +1,4 @@
-define(['./vlog', './Tank', './Map', 'http://' + location.host + ':8080/socket.io/socket.io.js'], function(vlog, Tank, Map) {
+define(['./vlog', './Tank', './Map', 'http://' + location.hostname + ':8080/socket.io/socket.io.js'], function(vlog, Tank, Map) {
   var bot_tank,
     client_tanks = {},
     uuid = '',
@@ -8,7 +8,7 @@ define(['./vlog', './Tank', './Map', 'http://' + location.host + ':8080/socket.i
 
   function start() {
     Tank = Tank || require('Tank');
-    socket = io.connect('http://' + location.host + ':8080'),
+    socket = io.connect('http://' + location.hostname + ':8080'),
 
     socket.on('uuid', function (data) {
       uuid = data.uuid;
