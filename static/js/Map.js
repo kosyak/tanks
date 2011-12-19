@@ -137,56 +137,66 @@ define(['./vlog', './Tank'], function(vlog, Tank) {
 
   // Проверяет положение танка на наличие коллизий с элементами карты
   function collide(tank) {
-    var cells = [
-      { x: Math.floor(tank.pos.x / cell_size), y: Math.floor(tank.pos.y / cell_size) }, // top left
-      { x: Math.floor((tank.pos.x + tank.width()) / cell_size), y: Math.floor(tank.pos.y / cell_size) }, // top right
-      { x: Math.floor(tank.pos.x / cell_size), y: Math.floor((tank.pos.y + tank.height()) / cell_size) }, // bottom left
-      { x: Math.floor((tank.pos.x + tank.width()) / cell_size), y: Math.floor((tank.pos.y + tank.height()) / cell_size) }, // bottom right
-    ];
-    for (var i = 0; i < cells.length; i += 1) {
-      if (cells[i].x < 0) {
-        tank.pos.x = 0;
-        return true;
-      } else if (cells[i].x >= tile_map[0].length) {
-        tank.pos.x = cell_size * tile_map[0].length - tank.width();
-        return true;
-      } else if (cells[i].y < 0) {
-        tank.pos.y = 0;
-        return true;
-      } else if (cells[i].y >= tile_map.length) {
-        tank.pos.y = cell_size * tile_map.length - tank.height();
-        return true;
-      } else if (!isRoad(tile_map[cells[i].y][cells[i].x])) {
-        switch (i) {
-          case 0:
-            if (tank.width() > tank.height()) { // horizontal position - move to the right from cell
-              tank.pos.x = cells[i].x * cell_size + cell_size;
-            } else { // vertical
-              tank.pos.y = cells[i].y * cell_size + cell_size; // to the down from cell
-            }
-          break;
-          case 1:
-            if (tank.width() > tank.height()) { // horizontal
-              tank.pos.x = cells[i].x * cell_size - tank.width(); // to the left
-            } else { // vertical
-              tank.pos.y = cells[i].y * cell_size + cell_size; // to the down
-            }
-          break;
-          case 2:
-            if (tank.width() > tank.height()) { // horizontal
-              tank.pos.x = cells[i].x * cell_size + cell_size; // to the right
-            } else { // vertical
-              tank.pos.y = cells[i].y * cell_size - tank.height(); // to the up
-            }
-          break;
-          case 3:
-            if (tank.width() > tank.height()) { // horizontal
-              tank.pos.x = cells[i].x * cell_size - tank.width(); // to the left
-            } else { // vertical
-              tank.pos.y = cells[i].y * cell_size - tank.height(); // to the up
-            }
-          break;
+    var direction = tank.rotation ? tank.rotation.direction : tank.direction,
+      newPos = {
+        x: Math.min(this.width() - tank.width(direction) - 1, Math.max(0, tank.pos.x)),
+        y: Math.min(this.height() - tank.height(direction) - 1, Math.max(0, tank.pos.y))
+      }
+    if (newPos.x !== tank.pos.x || newPos.y !== tank.pos.y) {
+      tank.pos = newPos;
+      return true;
+    }
+
+    var isHorizontal = [tank.DIR_LEFT, tank.DIR_RIGHT].indexOf(direction) > -1;
+
+    var cells = [ { x: Math.floor(tank.pos.x / cell_size), y: Math.floor(tank.pos.y / cell_size) } ]; // top left
+    if (!isRoad(tile_map[cells[0].y][cells[0].x])) {
+      if (isHorizontal) { // horizontal position - move to the right from cell
+        tank.pos.x = cells[0].x * cell_size + cell_size;
+      } else { // vertical
+        tank.pos.y = cells[0].y * cell_size + cell_size; // to the down from cell
+      }
+      return true;
+    }
+
+    if (tank.pos.x + tank.width(direction) > (cells[0].x + 1) * cell_size) {
+      cells.push( { x: cells[0].x + 1, y: cells[0].y } ); // top right
+      if (!isRoad(tile_map[cells[1].y][cells[1].x])) {
+        if (isHorizontal || tank.rotation) {
+          if (tank.rotation) { // WTF??
+            return false;
+          }
+          tank.pos.x = cells[1].x * cell_size - tank.width(direction); // to the left
+        } else { // vertical
+          tank.pos.y = cells[1].y * cell_size + cell_size; // to the down
         }
+        console.log('top right');
+        return true;
+      }
+    }
+    if (tank.pos.y + tank.height(direction) > (cells[0].y + 1) * cell_size) {
+      cells.push( { x: cells[0].x, y: cells[0].y + 1 } ); // bottom left
+      if (!isRoad(tile_map[cells[cells.length - 1].y][cells[cells.length - 1].x])) {
+        if (isHorizontal) {
+          tank.pos.x = cells[cells.length - 1].x * cell_size + cell_size; // to the right
+        } else { // vertical
+          tank.pos.y = cells[cells.length - 1].y * cell_size - tank.height(direction); // to the up
+        }
+        return true;
+      }
+    }
+    if (cells[1] && cells[2]) {
+      cells.push( { x: cells[0].x + 1, y: cells[0].y + 1 } ); // bottom right
+      if (!isRoad(tile_map[cells[3].y][cells[3].x])) {
+        if (isHorizontal || tank.rotation) {
+          if (tank.rotation) { // WTF??
+            return false;
+          }
+          tank.pos.x = cells[3].x * cell_size - tank.width(direction); // to the left
+        } else { // vertical
+          tank.pos.y = cells[3].y * cell_size - tank.height(direction); // to the up
+        }
+        console.log('bottom right');
         return true;
       }
     }

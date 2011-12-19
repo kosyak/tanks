@@ -24,7 +24,7 @@ define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard,
   function Bullet(tank) {
     MainLoop = MainLoop || require('MainLoop');
 
-    this.speed = 0.08; // pixels per millisecond
+    this.speed = 0.10; // pixels per millisecond
     this.tank = tank;
     this.size = 14;
     this.pos = {
@@ -195,6 +195,12 @@ define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard,
       }
   }
 
+  Tank.prototype.placeCell = function(x, y) {
+    x = Math.min(Math.max(x, 0), Math.floor(Map.width() / Map.blockSize()) - 1);
+    y = Math.min(Math.max(y, 0), Math.floor(Map.height() / Map.blockSize()) - 1);
+    this.place(x * Map.blockSize() + 0.5 * (Map.blockSize() - this.width()), y * Map.blockSize() + 0.5 * (Map.blockSize() - this.height()));
+  }
+
   Tank.prototype.place = function(x, y, no_render, set_direction) {
     if (typeof no_render === 'number' && no_render >= 0 && no_render <= 3) {
       set_direction = no_render;
@@ -233,8 +239,6 @@ define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard,
         }
       }
 
-      Map.collide(this); // метод сам правит координаты
-
       var direction = this.rotation ? this.rotation.direction : this.direction;
 
       // Не понимаю, почему нужно это смещение. Пока считаем за HACK
@@ -244,6 +248,8 @@ define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard,
       } else if (direction === DIR_RIGHT) {
         hack_delta = { x: this.rotate_delta, y: this.rotate_delta };
       }
+
+      Map.collide(this); // метод сам правит координаты
 
       this.context.save();
       this.context.setTransform(1, 0, 0, 1, 0, 0);

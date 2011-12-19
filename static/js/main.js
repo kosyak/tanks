@@ -15,7 +15,7 @@ require(['./MainLoop', './vlog', './Tank', './Map', './WS', './Keyboard'], funct
       Keyboard.start();
 
       var tank = new Tank(Map.context(), { left: 37, top: 38, right: 40, down: 39, shoot: 32 }, function() {
-        tank.place(70, 70);
+        tank.placeCell(2, 5);
         // MainLoop.push(function() { vlog.log('x: ' + tank.pos.x + '; y: ' + tank.pos.y); });
       });
     });
