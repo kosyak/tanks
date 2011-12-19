@@ -4,6 +4,7 @@
 #include <sys/un.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <cstring>
 
 char message[] = "Hello there!\n";
 char buf[sizeof(message)];
