@@ -135,15 +135,21 @@ define(['./vlog', './Tank'], function(vlog, Tank) {
     }
   };
 
-  // Проверяет положение танка на наличие коллизий с элементами карты
-  function collide(tank) {
+    /**
+     * Проверяет положение танка на наличие коллизий с элементами карты
+     * @param tank - объект анализа
+     * @param noFix - надо ли править положение на корректное при коллизиии (@default false)
+     */
+  function collide(tank, noFix) {
     var direction = tank.rotation ? tank.rotation.direction : tank.direction,
       newPos = {
         x: Math.min(this.width() - tank.width(direction) - 1, Math.max(0, tank.pos.x)),
         y: Math.min(this.height() - tank.height(direction) - 1, Math.max(0, tank.pos.y))
       }
-    if (newPos.x !== tank.pos.x || newPos.y !== tank.pos.y) {
-      tank.pos = newPos;
+    if (newPos.x !== tank.pos.x || newPos.y !== tank.pos.y) { // Границы поля
+      if (!noFix) {
+          tank.pos = newPos;
+      }
       return true;
     }
 
@@ -151,10 +157,12 @@ define(['./vlog', './Tank'], function(vlog, Tank) {
 
     var cells = [ { x: Math.floor(tank.pos.x / cell_size), y: Math.floor(tank.pos.y / cell_size) } ]; // top left
     if (!isRoad(tile_map[cells[0].y][cells[0].x])) {
-      if (isHorizontal) { // horizontal position - move to the right from cell
-        tank.pos.x = cells[0].x * cell_size + cell_size;
-      } else { // vertical
-        tank.pos.y = cells[0].y * cell_size + cell_size; // to the down from cell
+      if (!noFix) {
+        if (isHorizontal) { // horizontal position - move to the right from cell
+          tank.pos.x = cells[0].x * cell_size + cell_size;
+        } else { // vertical
+          tank.pos.y = cells[0].y * cell_size + cell_size; // to the down from cell
+        }
       }
       return true;
     }
@@ -166,8 +174,10 @@ define(['./vlog', './Tank'], function(vlog, Tank) {
           if (tank.rotation) { // WTF??
             return false;
           }
-          tank.pos.x = cells[1].x * cell_size - tank.width(direction); // to the left
-        } else { // vertical
+          if (!noFix) {
+            tank.pos.x = cells[1].x * cell_size - tank.width(direction); // to the left
+          }
+        } else if (!noFix) { // vertical
           tank.pos.y = cells[1].y * cell_size + cell_size; // to the down
         }
         console.log('top right');
@@ -177,10 +187,12 @@ define(['./vlog', './Tank'], function(vlog, Tank) {
     if (tank.pos.y + tank.height(direction) > (cells[0].y + 1) * cell_size) {
       cells.push( { x: cells[0].x, y: cells[0].y + 1 } ); // bottom left
       if (!isRoad(tile_map[cells[cells.length - 1].y][cells[cells.length - 1].x])) {
-        if (isHorizontal) {
-          tank.pos.x = cells[cells.length - 1].x * cell_size + cell_size; // to the right
-        } else { // vertical
-          tank.pos.y = cells[cells.length - 1].y * cell_size - tank.height(direction); // to the up
+        if (!noFix) {
+          if (isHorizontal) {
+            tank.pos.x = cells[cells.length - 1].x * cell_size + cell_size; // to the right
+          } else { // vertical
+            tank.pos.y = cells[cells.length - 1].y * cell_size - tank.height(direction); // to the up
+          }
         }
         return true;
       }
@@ -192,8 +204,10 @@ define(['./vlog', './Tank'], function(vlog, Tank) {
           if (tank.rotation) { // WTF??
             return false;
           }
-          tank.pos.x = cells[3].x * cell_size - tank.width(direction); // to the left
-        } else { // vertical
+          if (!noFix) {
+            tank.pos.x = cells[3].x * cell_size - tank.width(direction); // to the left
+          }
+        } else if (!noFix) { // vertical
           tank.pos.y = cells[3].y * cell_size - tank.height(direction); // to the up
         }
         console.log('bottom right');

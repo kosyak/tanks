@@ -76,7 +76,7 @@ define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard,
 
   Bullet.prototype.placeMove = function(no_render) {
 
-    if (!no_render && Map.collide(this)) {
+    if (!no_render && Map.collide(this, true)) {
       this.remove();
     }
 
