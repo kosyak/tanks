@@ -85,6 +85,18 @@ define(['./vlog', './Tank', './Map', 'http://' + location.hostname + ':8080/sock
       tanks: require('Tank').prototype.TanksData()
     });
   };
+  
+  function reportKill(killer, victim) {
+    if (!(started && Map && Map.data)) {
+      return false;
+    }
+    socket.emit('kill', {
+      uuid: uuid,
+      killer: killer,
+      victim: victim,
+      time: Date.now(),
+    });
+  }
 
   /* var self = this;
   MainLoop.push(function() { self.report(); }); */

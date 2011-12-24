@@ -1,4 +1,4 @@
-define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard, MainLoop, Map) {
+define(['./vlog', './Keyboard', './MainLoop', './Map', './WS'], function(vlog, Keyboard, MainLoop, Map, WS) {
   var globalTankCache = [];
 
   var DIR_UP = 0,
@@ -101,13 +101,34 @@ define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard,
     this.pos.x += this.delta.x;
     this.pos.y += this.delta.y;
   }
+  
+  /**
+   * Убиваем танки пулями
+   * TODO: убивать пули пулями
+   */
+  Bullet.prototype.collide = function() {
+    for (var i = 0; i < globalTankCache.length; i += 1) {
+      var tank = globalTankCache[i];
+      if (tank !== this.tank) {
+        if (this.pos.x + this.width() < tank.pos.x ||
+          this.pos.x > tank.pos.x + tank.width() ||
+          this.pos.y + this.height() < tank.pos.y ||
+          this.pos.y > tank.pos.y + tank.height()) {
+            continue;
+        } else {
+          tank.kill();
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
   Bullet.prototype.remove = function() {
     this.placeMove(true);
     MainLoop.remove(this.queryIndex);
     delete this.tank.bullet;
   }
-
 
 
   /**
@@ -300,9 +321,14 @@ define(['./vlog', './Keyboard', './MainLoop', './Map'], function(vlog, Keyboard,
     this.place(true);
     MainLoop.remove(this.queryIndex);
   }
+  
+  Tank.prototype.kill = function(bullet) {
+    WS.reportKill(bullet.tank, this);
+    this.remove();
+  }
 
   Tank.prototype.collide = function() {
-    if (!this.key) {
+    if (!this.key) { // is this a bot/directed by server?
       return false;
     }
     for (var i = 0; i < globalTankCache.length; i += 1) {

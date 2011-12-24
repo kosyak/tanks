@@ -125,6 +125,17 @@ io.sockets.on('connection', function (socket) {
       }
     }
   });
+  socket.on('kill', function (data) {
+    console.log('kill data', data);
+    /* if (data.tanks && data.tanks.length) {
+      clients[uuid] = { // === data.uuid ??
+        // с клиента приходят данные ровно об одном танке
+        x: data.tanks[0].x,
+        y: data.tanks[0].y,
+        direction: data.tanks[0].direction
+      }
+    }*/
+  });
   socket.on('disconnect', function() {
     console.log('disconnect: ' + uuid);
     io.sockets.in('room1').emit('remove', { id: uuid });
