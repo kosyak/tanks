@@ -8,16 +8,27 @@ require(['./MainLoop', './vlog', './Tank', './Map', './WS', './Keyboard'], funct
   window.onload = function() {
     // initCanvas('canvasOne');
     Map.init(function() {
+      var tank;
       MainLoop.start();
       window.onresize = Map.center;
       Map.center();
-      WS.start();
+      WS.start(function(uuid) {
+        tank = new Tank({
+          id: uuid,
+          keys: {
+            left: 37,
+            top: 38,
+            right: 40,
+            down: 39,
+            shoot: 32
+          }
+        }, function() {
+          tank.placeCell(2, 5);
+          // MainLoop.push(function() { vlog.log('x: ' + tank.pos.x + '; y: ' + tank.pos.y); });
+        });
+      });
       Keyboard.start();
 
-      var tank = new Tank(Map.context(), { left: 37, top: 38, right: 40, down: 39, shoot: 32 }, function() {
-        tank.placeCell(2, 5);
-        // MainLoop.push(function() { vlog.log('x: ' + tank.pos.x + '; y: ' + tank.pos.y); });
-      });
     });
   }
 

@@ -6,12 +6,15 @@ define(['./vlog', './Tank', './Map', 'http://' + location.hostname + ':8080/sock
     events = [],
     started = false;
 
-  function start() {
+  function start(uuid_callback) {
     Tank = Tank || require('Tank');
     socket = io.connect('http://' + location.hostname + ':8080');
     socket.on('uuid', function (data) {
       uuid = data.uuid;
       console.log('uuid: ', data.uuid);
+      if (typeof uuid_callback == 'function') {
+        uuid_callback(uuid);
+      }
     });
 
     socket.on('message', function(data) {
@@ -45,12 +48,16 @@ define(['./vlog', './Tank', './Map', 'http://' + location.hostname + ':8080/sock
       /*var data = */events.splice(0, 1);
       switch (data.type) {
         case 'create':
-          bot_tank = new Tank(Map.context(), function() {
+          bot_tank = new Tank({
+            id: data.id
+          }, function() {
             bot_tank.place(data.position.x, data.position.y, data.direction);
           });
         break;
         case 'place': {
-          bot_tank = bot_tank || new Tank(Map.context());
+          bot_tank = bot_tank || new Tank({
+            id: data.id
+          });
           bot_tank.place(data.position.x, data.position.y, true, data.direction);
         }
         break;
@@ -58,20 +65,36 @@ define(['./vlog', './Tank', './Map', 'http://' + location.hostname + ':8080/sock
           for (var id in data.clients) {
             if (id !== uuid) {
               // if (typeof client_tanks[uuid] === 'undefined') { console.log('new tank: ', data.clients[uuid]); }
-              client_tanks[id] = client_tanks[id] || new Tank(Map.context());
+              client_tanks[id] = client_tanks[id] || new Tank({
+                id: id
+              });
               client_tanks[id].place(data.clients[id].x, data.clients[id].y, true, data.clients[id].direction);
             }
           }
         break;
         case 'remove':
-          client_tanks[data.id].remove();
-          delete client_tanks[data.id];
+          console.log('remove: ' + client_tanks[data.id]);
+          if (client_tanks[data.id] && client_tanks[data.id].remove) {
+            client_tanks[data.id].remove();
+            delete client_tanks[data.id];
+          } else {
+            var tankCache = Tank.prototype.globalTankCache.call(this);
+            for (var i = 0; i < tankCache.length; i += 1) {
+              if (tankCache[i].id === data.id) {
+                tankCache[i].remove();
+              }
+            }
+          }
         break;
         default:
         break;
       }
     }
     return true;
+  }
+
+  function requestTank() {
+    socket.emit('request');
   }
 
   function report() {
@@ -86,7 +109,7 @@ define(['./vlog', './Tank', './Map', 'http://' + location.hostname + ':8080/sock
     });
     return true;
   }
-  
+
   function reportKill(killer, victim, callback) {
     console.log(killer, 'killed', victim);
     if (!(started && Map && Map.data)) {
@@ -94,8 +117,8 @@ define(['./vlog', './Tank', './Map', 'http://' + location.hostname + ':8080/sock
     }
     socket.emit('kill', {
       uuid: uuid,
-      killer: killer,
-      victim: victim,
+      killer: killer.id,
+      victim: victim.id,
       time: Date.now()
     }, function() {
       if (typeof callback == 'function') {
@@ -112,6 +135,7 @@ define(['./vlog', './Tank', './Map', 'http://' + location.hostname + ':8080/sock
     start: start,
     report: report,
     reportKill: reportKill,
-    receive: receive
+    receive: receive,
+    requestTank: requestTank
   };
 });

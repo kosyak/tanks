@@ -81,6 +81,7 @@ define(['./vlog', './Keyboard', './MainLoop', './Map', './WS'], function(vlog, K
       var self = this,
         tank = this.collide(); // TODO: remove double invocation of collide()
       tank.kill(this, function() {
+        console.log('bullet callback');
         self.remove();
       });
 
@@ -107,7 +108,7 @@ define(['./vlog', './Keyboard', './MainLoop', './Map', './WS'], function(vlog, K
     this.pos.x += this.delta.x;
     this.pos.y += this.delta.y;
   }
-  
+
   /**
    * Убиваем танки пулями
    * TODO: убивать пули пулями
@@ -139,18 +140,20 @@ define(['./vlog', './Keyboard', './MainLoop', './Map', './WS'], function(vlog, K
   /**
    * Объект танка
    *
-   * @param CanvasRenderingContext2D context контекст, на котором будет рисоваться танк
-   * @param Object keys массив кодов клавиш { left: key_left, top: key_top, right: key_right, down: key_bottom }
+   * @param String params.id ID танка, в данный момент - UUID клиента
+   * @param CanvasRenderingContext2D params.context контекст, на котором будет рисоваться танк
+   * @param Object params.keys массив кодов клавиш { left: key_left, top: key_top, right: key_right, down: key_bottom }
    *
    **/
 
-  function Tank(context, keys, callback) {
+  function Tank(params, callback/*context, keys, callback*/) {
     MainLoop = MainLoop || require('MainLoop');
     WS = WS || require('WS');
+    Map = Map || require('Map');
     globalTankCache.push(this);
 
-    this.id = '';
-    this.key = (keys && typeof keys !== 'function') ? keys : false;
+    this.id = params.id || '';
+    this.key = params.keys || false;
     this.imgURI = staticDir + 'img/tank.png'; // URI! Yo!
     this.img = new Image();
     this.img.src = this.imgURI;
@@ -159,16 +162,16 @@ define(['./vlog', './Keyboard', './MainLoop', './Map', './WS'], function(vlog, K
     this.rotate_delta = 5;// (this.img.naturalWidth && this.img.naturalHeight) ? 0.5 * Math.abs(self.img.naturalWidth - self.img.naturalHeight) : 0;
     this.direction = DIR_UP;
     var self = this;
-    if (typeof callback === 'function' || typeof keys === 'function') {
+    if (typeof callback == 'function') {
       this.img.onload = function() {
         self.lastMove = new Date();
         self.rotate_delta = 0.5 * Math.abs(self.img.naturalWidth - self.img.naturalHeight);
-        (typeof callback === 'function') ? callback() : keys();
+        callback();
       }
     }
     this.deltaChar = {};
 
-    this.context = context;
+    this.context = params.context || Map.context();
 
     this.speed = 0.04; // pixels per millisecond
     this.lastMove = new Date();
@@ -202,6 +205,8 @@ define(['./vlog', './Keyboard', './MainLoop', './Map', './WS'], function(vlog, K
       }
     }
     this.queryIndex = MainLoop.push(function() { self.place(); });
+
+    console.log('Tank id=' + this.id + ' created');
   }
 
   Tank.prototype.width = function(direction) {
@@ -320,17 +325,18 @@ define(['./vlog', './Keyboard', './MainLoop', './Map', './WS'], function(vlog, K
   }
 
   Tank.prototype.data = function() {
-    return { x: this.pos.x, y: this.pos.y, direction: this.direction };
+    return { x: this.pos.x, y: this.pos.y, direction: this.direction, id: this.id };
   }
 
   Tank.prototype.remove = function() {
     this.place(true);
     MainLoop.remove(this.queryIndex);
   }
-  
+
   Tank.prototype.kill = function(bullet, callback) {
     var self = this;
-    WS.reportKill(bullet.tank, function() {
+    WS.reportKill(bullet.tank, this, function() {
+      console.log('tank callback');
       self.remove();
       if (typeof callback == 'function') {
         callback();

@@ -36,7 +36,11 @@ function authCallback(error, authorized) {
 function putBot(id, socket) {
   if (bots.indexOf(id) == -1) {
     bot_pos = { x: 140, y: 140 };
-    socket.emit('bot', { type: 'create', position: bot_pos });
+    socket.emit('bot', {
+      type: 'create',
+      position: bot_pos,
+      id: id
+    });
     console.log('bot sent');
     bots.push(id);
 
@@ -64,7 +68,7 @@ function putBot(id, socket) {
           direction = DIR_DOWN;
         }
 
-        io.sockets.in('room1').emit('bot', { type: 'place', position: bot_pos, direction: direction });
+        io.sockets.in('room1').emit('bot', { type: 'place', position: bot_pos, direction: direction, id: id });
         //console.log('direction: ' + direction);
         io.sockets.in('room1').emit('clients', { clients: clients });
         // console.log('clients: ', clients);
@@ -109,10 +113,15 @@ io.sockets.on('connection', function (socket) {
   socket.join('room1');
   clients[uuid] = {
     x: 70,
-    y: 70
+    y: 70,
+    id: uuid
   }
 
   putBot(1, socket);
+
+  socket.on('request', function(data) {
+
+  });
 
   socket.on('report', function (data) {
     // console.log('report data', data);
@@ -121,20 +130,15 @@ io.sockets.on('connection', function (socket) {
         // с клиента приходят данные ровно об одном танке
         x: data.tanks[0].x,
         y: data.tanks[0].y,
-        direction: data.tanks[0].direction
+        direction: data.tanks[0].direction,
+        id: uuid
       }
     }
   });
   socket.on('kill', function (data) {
     console.log('kill data', data);
-    /* if (data.tanks && data.tanks.length) {
-      clients[uuid] = { // === data.uuid ??
-        // с клиента приходят данные ровно об одном танке
-        x: data.tanks[0].x,
-        y: data.tanks[0].y,
-        direction: data.tanks[0].direction
-      }
-    }*/
+    io.sockets.in('room1').emit('remove', { id: data.victim });
+    delete clients[data.victim];
   });
   socket.on('disconnect', function() {
     console.log('disconnect: ' + uuid);
