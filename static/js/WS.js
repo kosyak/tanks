@@ -8,8 +8,7 @@ define(['./vlog', './Tank', './Map', 'http://' + location.hostname + ':8080/sock
 
   function start() {
     Tank = Tank || require('Tank');
-    socket = io.connect('http://' + location.hostname + ':8080'),
-
+    socket = io.connect('http://' + location.hostname + ':8080');
     socket.on('uuid', function (data) {
       uuid = data.uuid;
       console.log('uuid: ', data.uuid);
@@ -72,6 +71,7 @@ define(['./vlog', './Tank', './Map', 'http://' + location.hostname + ':8080/sock
         break;
       }
     }
+    return true;
   }
 
   function report() {
@@ -84,9 +84,11 @@ define(['./vlog', './Tank', './Map', 'http://' + location.hostname + ':8080/sock
       map: Map.data(),
       tanks: require('Tank').prototype.TanksData()
     });
-  };
+    return true;
+  }
   
-  function reportKill(killer, victim) {
+  function reportKill(killer, victim, callback) {
+    console.log(killer, 'killed', victim);
     if (!(started && Map && Map.data)) {
       return false;
     }
@@ -94,8 +96,13 @@ define(['./vlog', './Tank', './Map', 'http://' + location.hostname + ':8080/sock
       uuid: uuid,
       killer: killer,
       victim: victim,
-      time: Date.now(),
+      time: Date.now()
+    }, function() {
+      if (typeof callback == 'function') {
+        callback();
+      }
     });
+    return true;
   }
 
   /* var self = this;
@@ -104,6 +111,7 @@ define(['./vlog', './Tank', './Map', 'http://' + location.hostname + ':8080/sock
   return {
     start: start,
     report: report,
+    reportKill: reportKill,
     receive: receive
   };
 });

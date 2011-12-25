@@ -75,10 +75,15 @@ define(['./vlog', './Keyboard', './MainLoop', './Map', './WS'], function(vlog, K
   }
 
   Bullet.prototype.placeMove = function(no_render) {
-
-    if (!no_render && (Map.collide(this, true) || this.collide())) {
-      no_render = true;
+    if (!no_render && Map.collide(this, true)) {
       this.remove();
+    } else if (this.collide()) {
+      var self = this,
+        tank = this.collide(); // TODO: remove double invocation of collide()
+      tank.kill(this, function() {
+        self.remove();
+      });
+
     }
 
     Map.clear({
@@ -117,8 +122,7 @@ define(['./vlog', './Keyboard', './MainLoop', './Map', './WS'], function(vlog, K
           this.pos.y > tank.pos.y + tank.height()) {
             continue;
         } else {
-          tank.kill();
-          return true;
+          return tank;
         }
       }
     }
@@ -135,17 +139,18 @@ define(['./vlog', './Keyboard', './MainLoop', './Map', './WS'], function(vlog, K
   /**
    * Объект танка
    *
-   * @param CanvasRenderingContext2D container контекст, на котором будет рисоваться танк
+   * @param CanvasRenderingContext2D context контекст, на котором будет рисоваться танк
    * @param Object keys массив кодов клавиш { left: key_left, top: key_top, right: key_right, down: key_bottom }
    *
    **/
 
   function Tank(context, keys, callback) {
     MainLoop = MainLoop || require('MainLoop');
+    WS = WS || require('WS');
     globalTankCache.push(this);
 
+    this.id = '';
     this.key = (keys && typeof keys !== 'function') ? keys : false;
-    console.log(this.key);
     this.imgURI = staticDir + 'img/tank.png'; // URI! Yo!
     this.img = new Image();
     this.img.src = this.imgURI;
@@ -323,9 +328,15 @@ define(['./vlog', './Keyboard', './MainLoop', './Map', './WS'], function(vlog, K
     MainLoop.remove(this.queryIndex);
   }
   
-  Tank.prototype.kill = function(bullet) {
-    WS.reportKill(bullet.tank, this);
-    this.remove();
+  Tank.prototype.kill = function(bullet, callback) {
+    var self = this;
+    WS.reportKill(bullet.tank, function() {
+      self.remove();
+      if (typeof callback == 'function') {
+        callback();
+      }
+    });
+    // this.remove();
   }
 
   Tank.prototype.collide = function() {
